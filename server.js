@@ -1,19 +1,16 @@
 const Hapi=require('hapi');
-const MongoClient = require('mongodb').MongoClient;
+//const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
-const db = require('./config/db');
+//const db = require('./config/db');
 const issueRoutes = require('./routes/issueRouts.js')
 
 const mongoose = require('mongoose');
-
-// import environmental variables from our variables.env file
-require('dotenv').config({ path: 'variables.env' });
-
-// Connect to our Database and handle any bad connections
-mongoose.connect(process.env.DATABASE);
-mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
-mongoose.connection.on('error', (err) => {
-  console.error(`${err.message}`);
+mongoose.connect('mongodb://ch1:ch1@ds111319.mlab.com:11319/ch1');
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log('Connected to the db');
 });
 
 'use strict';
@@ -34,7 +31,7 @@ server.route({
     }
 });
 
-server.route(issueRoutes);
+//server.route(issueRoutes);
 
 // Start the server
 async function start() {
