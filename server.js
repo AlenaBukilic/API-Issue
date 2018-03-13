@@ -12,6 +12,7 @@ db.once('open', function() {
   console.log('Connected to the db');
 });
 
+
 'use strict';
 
 // Create a server with a host and port

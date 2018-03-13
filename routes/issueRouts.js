@@ -2,47 +2,47 @@ const IssueController = require('../controllers/issueController');
 
 module.exports = [
     {
-        path: 'api/issues',
+        path: '/create',
         method: 'POST',
         handler: IssueController.create
     },
     {
-        path: 'api/issues',
+        path: '/view',
         method: 'GET',
         handler: IssueController.view
     },
     {
-        path: 'api/issues/{id}',
+        path: '/edit/{id}',
         method: 'PUT',
         handler: IssueController.edit
     },
     {
-        path: 'api/issues/{id}',
+        path: '/destroy/{id}',
         method: 'DELETE',
         handler: IssueController.destroy
     },
     {
-        path: 'api/issues/{id}',
+        path: '/markComplete/{id}',
         method: 'PUT',
         handler: IssueController.markCompleted
     },
     {
-        path: 'api/issues/{id}',
+        path: '/markPending/{id}',
         method: 'PUT',
         handler: IssueController.markPending
     },
     {
-        path: 'api/issues/{id}',
+        path: '/uploadFiles/{id}',
         method: 'POST',
         handler: IssueController.uploadFiles
     },
     {
-        path: 'api/issues/{id}',
+        path: '/issues/{id}',
         method: 'GET',
         handler: IssueController.downloadFiles
     },
     {
-        path: 'api/issues/{id}',
+        path: '/comments/{id}',
         method: 'POST',
         handler: IssueController.comment
     },
