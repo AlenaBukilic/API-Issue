@@ -1,5 +1,4 @@
 const Hapi=require('hapi');
-//const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 //const db = require('./config/db');
 const issueRoutes = require('./routes/issueRouts.js')
@@ -31,7 +30,7 @@ server.route({
     }
 });
 
-//server.route(issueRoutes);
+server.route(issueRoutes);
 
 // Start the server
 async function start() {
