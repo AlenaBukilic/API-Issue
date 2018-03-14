@@ -4,11 +4,11 @@ module.exports = [
     {
         path: '/files',
         method: 'POST',
-        handler: FileController.uploadFiles
+        handler: FileController.upload
     },
     {
         path: '/files/{id}',
         method: 'GET',
-        handler: FileController.downloadFiles
+        handler: FileController.download
     }
-]
+];
