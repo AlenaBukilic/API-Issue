@@ -2,48 +2,38 @@ const IssueController = require('../controllers/issueController');
 
 module.exports = [
     {
-        path: '/create',
+        path: '/issues',
         method: 'POST',
         handler: IssueController.create
     },
     {
-        path: '/view',
+        path: '/issues',
         method: 'GET',
         handler: IssueController.view
     },
     {
-        path: '/edit/{id}',
+        path: '/issues/{id}',
         method: 'PUT',
         handler: IssueController.edit
     },
     {
-        path: '/destroy/{id}',
+        path: '/issues/{id}',
         method: 'DELETE',
         handler: IssueController.destroy
     },
     {
-        path: '/markComplete/{id}',
-        method: 'PUT',
+        path: '/issues/{id}/markCompleted',
+        method: 'PATCH',
         handler: IssueController.markCompleted
     },
     {
-        path: '/markPending/{id}',
-        method: 'PUT',
+        path: '/issues/{id}/markPending',
+        method: 'PATCH',
         handler: IssueController.markPending
     },
     {
-        path: '/uploadFiles/{id}',
-        method: 'POST',
-        handler: IssueController.uploadFiles
-    },
-    {
-        path: '/issues/{id}',
-        method: 'GET',
-        handler: IssueController.downloadFiles
-    },
-    {
-        path: '/comments/{id}',
-        method: 'POST',
+        path: '/issues/{id}/comments',
+        method: 'PATCH',
         handler: IssueController.comment
-    },
+    }
 ];

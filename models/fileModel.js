@@ -10,10 +10,10 @@ const FileSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    issue: {
-        type: String,
+    issue: [{
+        type: mongoose.Schema.ObjectId,
         ref: 'Issue'
-    }
+    }]
 });
 
 module.exports = mongoose.model('File', FileSchema);
