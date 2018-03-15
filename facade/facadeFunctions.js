@@ -1,10 +1,11 @@
-import { uploadFile } from '../dals/dalsFunctions';
+import { uploadFile, downloadFile } from '../dals/dalsFunctions';
+import { completed, pending } from '../dals/dalsFunctions';
 
 const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 const File = mongoose.model('File');
 
-exports.create = (req, res) => {
+exports.createFacade = (req, res) => {
     Issue.save({
         title: req.payload.title,
         description: req.payload.description,
@@ -17,7 +18,7 @@ exports.create = (req, res) => {
     });
 }
 
-exports.view = (req,res) => {
+exports.viewFacade = (req,res) => {
     Issue.find({}, (err, issue) => {
         if(err){
             reply(err).code(404);
@@ -26,7 +27,7 @@ exports.view = (req,res) => {
     });
 }
 
-exports.edit = (req,res) => {
+exports.editFacade = (req,res) => {
     Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true, // return updated issue
         runValidators: true
@@ -38,7 +39,7 @@ exports.edit = (req,res) => {
     });
 }
 
-exports.destroy = (req,res) => {
+exports.destroyFacade = (req,res) => {
     Issue.findOneAndRemove({ _id: req.params.id }, (err, issue) => {
         if(err){
             reply(err).code(404);
@@ -47,29 +48,11 @@ exports.destroy = (req,res) => {
     });
 }
 
-exports.markCompleted = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        complete: 'Completed'
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
-}
+exports.markCompletedFacade = completed();
 
-exports.markPending = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        complete: 'Pending'
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
-}
+exports.markPendingFacade = pending();
 
-exports.comment = (req, res) => {
+exports.commentFacade = (req, res) => {
     Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
         comments: [{
             text: req.payload.text,
@@ -86,19 +69,9 @@ exports.comment = (req, res) => {
     });
 }
 
-exports.upload = (req, res) => {
+exports.uploadFacade = (req, res) => {
     Issue.findOne({ _id: req.params.id })
         .then(uploadFile);
 }
 
-exports.download = (req, res) => {
-    File.findOne({ _id: req.params.id })
-        .then((req, res) => {
-            res.file(url);// inert? 
-        }).then((err, issue) => {
-            if(err){
-                reply(err).code(404);
-            }
-            return reply(issue);
-        });
-}
+exports.downloadFacade = downloadFile();
