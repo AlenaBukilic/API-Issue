@@ -33,7 +33,7 @@ module.exports = [
     },
     {
         path: '/issues/{id}/comments',
-        method: 'PATCH',
+        method: 'POST',
         handler: IssueController.comment
     }
 ];
