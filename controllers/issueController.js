@@ -1,16 +1,17 @@
-import { createFacade, viewFacade, editFacade, destroyFacade } from '../facade/facadeFunctions';
-import { markCompletedFacade, markPendingFacade, commentFacade } from '../facade/facadeFunctions';
+//import { createFacade, viewFacade, editFacade, destroyFacade } from '../facade/facadeFunctions';
+//import { markCompletedFacade, markPendingFacade, commentFacade } from '../facade/facadeFunctions';
+const FacadeIssueController = require('../facade/issueFacadeFunctions.js');
 
-exports.create = createFacade;
+exports.create = FacadeIssueController.createFacade;
 
-exports.view = viewFacade;
+exports.view = FacadeIssueController.viewFacade;
 
-exports.edit = editFacade;
+exports.edit = FacadeIssueController.editFacade;
 
-exports.destroy = destroyFacade;
+exports.destroy = FacadeIssueController.destroyFacade;
 
-exports.markCompleted = markCompletedFacade;
+exports.markCompleted = FacadeIssueController.markCompletedFacade;
 
-exports.markPending = markPendingFacade;
+exports.markPending = FacadeIssueController.markPendingFacade;
 
-exports.comment = commentFacade;
+exports.comment = FacadeIssueController.commentFacade;

@@ -1,8 +1,5 @@
-const assert = require('chai').should();
-const mongoose = require('mongoose');
-
+const expect = require('chai').expect;
 const model = require('../models/issueModel');
-const Issue = mongoose.model('Issue');
 
 describe('A function that creates an issue', function() {
 
@@ -15,26 +12,26 @@ describe('A function that creates an issue', function() {
         };
 
         model.issue.create(issue, (err, issue) => {
-            should.not.exist(err);
+            expect(err).to.be.null;
 
-            should.exist(issue);
-            issue.should.be.an('object');
+            expect(issue).to.exist;
+            expect(issue).to.be.an('object');
 
-            should.exist(issue.id);
-            issue.id.should.be.a('number');
-            issue.id.should.be.gte(0);
+            expect(issue.id).to.ok;
+            expect(issue.id).to.be.a('number');
+            expect(issue.id).to.be.gte(0);
 
-            should.exist(issue.title);
-            issue.title.should.be.a('string');
-            issue.title.should.equal('First issue');
+            expect(issue.title).to.exist;
+            expect(issue.title).to.be.a('string');
+            expect(issue.title).to.be.equal('First issue');
 
-            should.exist(issue.description);
-            issue.description.should.be.a('string');
-            issue.description.should.equal('Something is not working');
+            expect(issue.description).to.exist;
+            expect(issue.description).to.be.a('string');
+            expect(issue.description).to.be.equal('Something is not working');
 
-            should.exist(issue.name);
-            issue.name.should.be.a('string');
-            issue.name.should.equal('Alena');
+            expect(issue.name).to.exist;
+            expect(issue.name).to.be.a('string');
+            expect(issue.name).to.be.equal('Alena');
             
             done();
         });

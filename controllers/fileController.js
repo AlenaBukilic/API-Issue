@@ -1,5 +1,6 @@
-import { uploadFacade, downloadFacade } from '../facade/facadeFunctions';
+//import { uploadFacade, downloadFacade } from '../facade/facadeFunctions';
+const FacadeIssueController = require('../facade/fileFacadeFunctions.js');
 
-exports.upload = uploadFacade;
+exports.upload = FacadeIssueController.uploadFacade;
 
-exports.download = downloadFacade;
+exports.download = FacadeIssueController.downloadFacade;

@@ -1,35 +1,33 @@
-const assert = require('chai').should();
-const mongoose = require('mongoose');
-
+const expect = require('chai').expect;
 const model = require('../models/fileModel');
-const File = mongoose.model('File');
-
 
 describe('A function that creates a file', function() {
 
-    it('should create the file', function(done) {
+    it('should create a file', function(done) {
         
         const file = {
-            url: "http://somefile.txt",
-            issue: mongoose.Schema.ObjectId
+            url: "http://somefile.com",
+            issue: 1
         };
 
         model.file.create(file, (err, file) => {
-            should.not.exist(err);
+            expect(err).to.be.null;
 
-            should.exist(file);
-            file.should.be.an('object');
+            expect(file).to.exist;
+            expect(file).to.be.an('object');
 
-            should.exist(file.id);
-            file.id.should.be.a('number');
-            file.id.should.be.gte(0);
+            expect(file.id).to.ok;
+            expect(file.id).to.be.a('number');
+            expect(file.id).to.be.gte(0);
 
-            should.exist(file.url);
-            file.url.should.be.a('string');
+            expect(file.url).to.exist;
+            expect(file.url).to.be.a('string');
+            expect(file.url).to.be.equal('http://somefile.com');
 
-            should.exist(file.issue);
-            file.issue.should.be.a('number');
-
+            expect(file.issue).to.exist;
+            expect(file.issue).to.be.a('number');
+            expect(file.issue).to.be.equal(1);
+            
             done();
         });
     });

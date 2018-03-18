@@ -1,4 +1,4 @@
-const FileController = require('../controllers/fileController');
+const FileController = require('../controllers/fileController.js');
 
 module.exports = [
     {

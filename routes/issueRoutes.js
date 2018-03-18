@@ -1,4 +1,4 @@
-const IssueController = require('../controllers/issueController');
+const IssueController = require('../controllers/issueController.js');
 
 module.exports = [
     {
