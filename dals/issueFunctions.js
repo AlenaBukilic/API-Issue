@@ -24,62 +24,40 @@ exports.view = (req, res) => {
     });
 }
 
-exports.edit = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        new: true, // return updated issue
-        runValidators: true
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+exports.edit = (attr, callback) => {
+    Issue.findOneAndUpdate({ _id: attr.id }, attr, { new: true }, callback);
 }
 
-exports.destroy = (req,res) => {
-    Issue.findOneAndRemove({ _id: req.params.id }, (err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+exports.destroy = (attr, callback) => {
+    Issue.findOneAndRemove({ _id: attr.id }, callback);
 }
 
-exports.completed = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        complete: 'Completed'
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+exports.completed = (attr, callback) => {
+    Issue.findOneAndUpdate({ _id: attr.id }, {
+        completed: 'Complete'
+    }, { new: true }, callback);
 }
 
-exports.pending = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        complete: 'Pending'
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+exports.pending = (attr, callback) => {
+    Issue.findOneAndUpdate({ _id: attr.id }, {
+        completed: 'Pending'
+    }, { new: true }, callback);
 }
 
-exports.comment = (req, res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        comments: [{
-            text: req.payload.text,
-            createdAt: {
-                type: Date,
-                default: Date.now
-            }
-        }]
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+exports.comment = (attr, callback) => {
+
+    let issue, comment;
+
+    Issue.findOne({ _id: attr.id })
+        .then(function(issueForUpdate){
+            issue = issueForUpdate;
+
+            comment = {
+                text: attr.text
+            };
+            issue.comments.push(comment);
+
+            return issue.save();
+        })
+        .then(callback);
 }
