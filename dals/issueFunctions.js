@@ -1,17 +1,18 @@
 const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
-exports.create = (req, res) => {
-    Issue.save({
-        title: req.payload.title,
-        description: req.payload.description,
-        name: req.payload.name
-    }, (err, issue) => {
-        if(err){
-            reply(err).code(500);
-        }
-        return res.response(issue);
-    });
+const callback = (err, issue) => {
+    if(err){
+        reply(err).code(500);
+    }
+    return res.response(issue);
+};
+exports.create = (attr, callback) => {
+    Issue.create({
+        title: attr.title,
+        description: attr.description,
+        name: attr.name
+    }, callback);
 }
 
 exports.view = (req,res) => {
