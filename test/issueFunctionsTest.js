@@ -5,10 +5,10 @@ const mongoose = require('mongoose');
 chai.use(require('chai-http'));
 
 const Issue = require('../models/issueModel');
-const testIssue = require('../dals/issueFunctions');
-// test coment
 const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
+
+const testIssue = require('../dals/issueFunctions');
 
 describe('API issues', function(){
     this.timeout(5000);
@@ -41,8 +41,8 @@ describe('API issues', function(){
         });
         describe('Invaild params', function() {
     
-            it.only('should not save issue', function(done){
-
+            it('should not save issue', function(done){
+ 
                 const issue = {
                     title: 0,
                     name: null
@@ -51,6 +51,35 @@ describe('API issues', function(){
                 testIssue.create(issue, (err, issue) => {
                     expect(err).to.have.status(400);
                     expect(callback).to.have.status(500);
+                });
+                done();
+            });
+        });
+    });
+
+    describe('View issues function', function(){
+
+        describe('Valid params', function(){
+
+            it('should show issues', function(done){
+                testIssue.view((err, issues) => {
+                    expect(err).to.be.null;                    
+
+                    expect(callback).to.have.status(200);
+                    expect(issues.body).to.be.json;
+                    expect(issues.body).to.be.an('array');
+                    expect(issue.body.results).to.be.an('object');                
+                });
+                done();
+            });
+        });
+        describe('Invaild params', function() {
+
+            it.only('should not show issue', function(done){
+ 
+                testIssue.create((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(404);
                 });
                 done();
             });

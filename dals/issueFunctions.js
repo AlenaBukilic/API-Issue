@@ -15,12 +15,12 @@ exports.create = (attr, callback) => {
     }, callback);
 }
 
-exports.view = (req,res) => {
-    Issue.find({}, (err, issue) => {
+exports.view = (req, res) => {
+    return Issue.find({}, (err, issue) => {
         if(err){
             reply(err).code(404);
         }
-        return reply(issue);
+        return res.response(issue);
     });
 }
 

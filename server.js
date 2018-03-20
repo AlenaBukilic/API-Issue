@@ -39,7 +39,7 @@ server.route({
     }
 });
 
-//server.route(issueRoutes);
+server.route(issueRoutes);
 
 // Start the server
 async function start() {
