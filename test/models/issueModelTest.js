@@ -17,10 +17,6 @@ describe('A function that creates an issue', function() {
             expect(issue).to.exist;
             expect(issue).to.be.an('object');
 
-            expect(issue.id).to.ok;
-            expect(issue.id).to.be.a('number');
-            expect(issue.id).to.be.gte(0);
-
             expect(issue.title).to.exist;
             expect(issue.title).to.be.a('string');
             expect(issue.title).to.be.equal('First issue');

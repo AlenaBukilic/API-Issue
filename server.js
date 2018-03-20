@@ -4,6 +4,10 @@ const Hapi = require('hapi');
 const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose');
 
+const Issue = require('./models/issueModel');
+const path = require('path');
+const File = require(path.resolve('./models/fileModel'));
+
 const issueRoutes = require('./routes/issueRoutes.js');
 const fileRoutes = require('./routes/fileRoutes.js');
 
