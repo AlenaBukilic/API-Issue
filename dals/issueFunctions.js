@@ -1,63 +1,80 @@
 const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
-const callback = (err, data) => {
-    if(err){
-        return err;
-    }
-    return data;
-};
-exports.create = (req, callback) => {
+exports.create = (req, res) => {
     return Issue.create({
         title: req.payload.title,
         description: req.payload.description,
         name: req.payload.name
+    }, (err, data) => {
+        if(err){
+            reply(err).code(500);
+        }
+        return res.response(data);
     });
 }
 
 exports.view = (req, res) => {
-    return Issue.find({}, (err, issue) => {
+    return Issue.find({}, (err, data) => {
         if(err){
             reply(err).code(404);
         }
-        return res.response(issue);
+        return res.response(data);
     });
 }
 
-exports.edit = (attr, callback) => {
-    Issue.findOneAndUpdate({ _id: attr.id }, attr, { new: true }, callback);
+exports.edit = (req, res) => {
+    return Issue.findOneAndUpdate({ _id: req.params.id }, 
+        req.payload, { new: true }, (err, data) => {
+            if(err){
+                reply(err).code(404);
+            }
+            return res.response(data);
+        });
 }
 
-exports.destroy = (attr, callback) => {
-    Issue.findOneAndRemove({ _id: attr.id }, callback);
+exports.destroy = (req, res) => {
+    return Issue.findOneAndRemove({ _id: req.params.id }, (err, data) => {
+        if(err){
+            reply(err).code(404);
+        }
+        return res.response(data);
+    });
 }
 
-exports.completed = (attr, callback) => {
-    Issue.findOneAndUpdate({ _id: attr.id }, {
+exports.completed = (req, res) => {
+   return Issue.findOneAndUpdate({ _id: req.params.id }, {
         completed: 'Complete'
-    }, { new: true }, callback);
+    }, { new: true }, (err, data) => {
+        if(err){
+            reply(err).code(404);
+        }
+        return res.response(data);
+    });
 }
 
-exports.pending = (attr, callback) => {
-    Issue.findOneAndUpdate({ _id: attr.id }, {
-        completed: 'Pending'
-    }, { new: true }, callback);
+exports.pending = (req, res) => {
+    return Issue.findOneAndUpdate({ _id: req.params.id }, {
+         completed: 'Pending'
+     }, { new: true }, (err, data) => {
+         if(err){
+             reply(err).code(404);
+         }
+         return res.response(data);
+     });
 }
 
-exports.comment = (attr, callback) => {
-
+exports.comment = (req, res) => {
     let issue, comment;
-
-    Issue.findOne({ _id: attr.id })
-        .then(function(issueForUpdate){
+    return Issue.findOne({ _id: req.params.id })
+        .then((issueForUpdate) => {
             issue = issueForUpdate;
 
             comment = {
-                text: attr.text
+                text: req.payload.comment
             };
             issue.comments.push(comment);
 
             return issue.save();
-        })
-        .then(callback);
+        });
 }

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// http://mongoosejs.com/docs/populate.html
 const Schema = mongoose.Schema;
 
 const FileSchema = new Schema({
