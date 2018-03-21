@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
+const mime = require('mime-types');
+
 const path = require('path');
 const Issue = require(path.resolve('./models/issueModel'));
 const File = require('../models/fileModel');
@@ -54,10 +56,11 @@ exports.downloadFile = (req, res) => {
             
             const path = file.path;
             const rstream = fs.createReadStream(path);
-            
+            const extType = mime.lookup(path);
+
             return res.response(rstream)
-            .type('application/pdf')
-            .header('Content-type', 'application/pdf')
+                .type(extType)
+                .header('Content-type', extType)
         });         
 }
 
