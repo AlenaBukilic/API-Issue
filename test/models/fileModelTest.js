@@ -1,34 +1,28 @@
-// const expect = require('chai').expect;
-// const model = require('../models/fileModel');
+const expect = require('chai').expect;
+const model = require('../../models/fileModel');
 
-// describe('A function that creates a file', function() {
+describe('FileModel - create', function() {
 
-//     it('should create a file', function(done) {
+    it('should check properties', function(done) {
         
-//         const file = {
-//             url: "http://somefile.com",
-//             issue: 1
-//         };
+        const file = {
+            path: "file.doc",
 
-//         model.file.create(file, (err, file) => {
-//             expect(err).to.be.null;
+        };
 
-//             expect(file).to.exist;
-//             expect(file).to.be.an('object');
+        model.create(file, (err, file) => {
+            expect(err).to.be.null;
 
-//             expect(file.id).to.ok;
-//             expect(file.id).to.be.a('number');
-//             expect(file.id).to.be.gte(0);
+            expect(file).to.exist;
+            expect(file).to.be.an('object');
 
-//             expect(file.url).to.exist;
-//             expect(file.url).to.be.a('string');
-//             expect(file.url).to.be.equal('http://somefile.com');
+            expect(file.path).to.exist;
+            expect(file.path).to.be.a('string');
+            expect(file.path).to.be.equal('file.doc');
 
-//             expect(file.issue).to.exist;
-//             expect(file.issue).to.be.a('number');
-//             expect(file.issue).to.be.equal(1);
+            expect(file.issue).to.exist;
             
-//             done();
-//         });
-//     });
-// });
+            done();
+        });
+    });
+});

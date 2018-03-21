@@ -1,6 +1,7 @@
 'use strict';
 
 const Hapi = require('hapi');
+const fs = require('fs');
 const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose');
 
@@ -40,6 +41,7 @@ server.route({
 });
 
 server.route(issueRoutes);
+server.route(fileRoutes);
 
 // Start the server
 async function start() {

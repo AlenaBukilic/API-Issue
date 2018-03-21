@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
-const callback = (err, issue) => {
+const callback = (err, data) => {
     if(err){
-        reply(err).code(500);
+        return err;
     }
-    return res.response(issue);
+    return data;
 };
-exports.create = (attr, callback) => {
-    Issue.create({
-        title: attr.title,
-        description: attr.description,
-        name: attr.name
-    }, callback);
+exports.create = (req, callback) => {
+    return Issue.create({
+        title: req.payload.title,
+        description: req.payload.description,
+        name: req.payload.name
+    });
 }
 
 exports.view = (req, res) => {
