@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 
 chai.use(require('chai-http'));
 
-const Issue = require('../models/issueModel');
+const Issue = require('../../models/issueModel');
 const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
 
-const testIssue = require('../dals/issueFunctions');
+const testIssue = require('../../dals/issueFunctions');
 
 describe('API issues', function(){
     this.timeout(5000);
@@ -25,12 +25,12 @@ describe('API issues', function(){
                     name: "Alena"
                 };
 
-                testIssue.create(issue, (err, issue) => {
+                testIssue.create(issue, (err, data) => {
                     expect(err).to.be.null;
                     
                     expect(callback).to.have.status(201);
                     expect(issue).to.be.json;
-                    expect(issue.body).to.be.an('object').that.includes({ 
+                    expect(issue.payload).to.be.an('object').that.includes({ 
                         title: "Second issue",
                         description: "Create function test",
                         name: "Alena"

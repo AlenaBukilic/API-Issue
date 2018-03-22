@@ -6,8 +6,8 @@ describe('FileModel - create', function() {
     it('should check properties', function(done) {
         
         const file = {
-            path: "file.doc",
-
+            path: "file.doc"
+            
         };
 
         model.create(file, (err, file) => {

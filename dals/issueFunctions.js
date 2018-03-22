@@ -8,7 +8,7 @@ exports.create = (req, res) => {
         name: req.payload.name
     }, (err, data) => {
         if(err){
-            reply(err).code(500);
+            res.response(err).code(500);
         }
         return res.response(data);
     });
@@ -17,7 +17,7 @@ exports.create = (req, res) => {
 exports.view = (req, res) => {
     return Issue.find({}, (err, data) => {
         if(err){
-            reply(err).code(404);
+            res.response(err).code(404);
         }
         return res.response(data);
     });
@@ -27,7 +27,7 @@ exports.edit = (req, res) => {
     return Issue.findOneAndUpdate({ _id: req.params.id }, 
         req.payload, { new: true }, (err, data) => {
             if(err){
-                reply(err).code(404);
+                res.response(err).code(404);
             }
             return res.response(data);
         });
@@ -36,7 +36,7 @@ exports.edit = (req, res) => {
 exports.destroy = (req, res) => {
     return Issue.findOneAndRemove({ _id: req.params.id }, (err, data) => {
         if(err){
-            reply(err).code(404);
+            res.response(err).code(404);
         }
         return res.response(data);
     });
@@ -47,7 +47,7 @@ exports.completed = (req, res) => {
         completed: 'Complete'
     }, { new: true }, (err, data) => {
         if(err){
-            reply(err).code(404);
+            res.response(err).code(404);
         }
         return res.response(data);
     });
@@ -58,7 +58,7 @@ exports.pending = (req, res) => {
          completed: 'Pending'
      }, { new: true }, (err, data) => {
          if(err){
-             reply(err).code(404);
+            res.response(err).code(404);
          }
          return res.response(data);
      });
