@@ -1,8 +1,14 @@
 'use strict';
 
 const Hapi = require('hapi');
+const fs = require('fs');
 const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose');
+const mime = require('mime-types');
+
+const Issue = require('./models/issueModel');
+const path = require('path');
+const File = require(path.resolve('./models/fileModel'));
 
 const issueRoutes = require('./routes/issueRoutes.js');
 const fileRoutes = require('./routes/fileRoutes.js');
@@ -17,7 +23,7 @@ mongoose.connection.on('error', (err) => {
   console.error(`error not connected to the db`);
 });
 mongoose.connection.on('open', () => {
-    console.error('Connected to the db');
+    console.log('Connected to the db');
 });
 
 // Create a server with a host and port
@@ -36,6 +42,7 @@ server.route({
 });
 
 server.route(issueRoutes);
+server.route(fileRoutes);
 
 // Start the server
 async function start() {

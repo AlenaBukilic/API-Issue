@@ -1,225 +1,259 @@
 const chai = require('chai');
 const expect = require('chai').expect;
+const mongoose = require('mongoose');
 
 chai.use(require('chai-http'));
 
-const testIssue = require('../dals/issueFunctions');
+const Issue = require('../../models/issueModel');
+const path = require('path');
+const File = require(path.resolve('./models/fileModel'));
 
-describe('Check dals issue functions', function(){
+const testIssue = require('../../dals/issueFunctions');
+
+describe('API issues', function(){
     this.timeout(5000);
 
-    describe('A function that saves an issue', function() {
-        
-        it('should save the issue', function() {
-            return chai.request(testIssue)
-                .post('/issues')
-                .send({
-                    title: "First issue",
-                    description: "Something is not working",
-                    name: "Alena"
-                })
-                .then(function(res){
-                    expect(res).to.have.status(201);
-                    expect(res).to.be.json;
-                    expect(res.body).to.be.an('object').that.includes({ title: "First issue",
-                    description: "Something is not working",
-                    name: "Alena"});
-                });
-        });
+    describe('Create issue function', function(){
+    
+        describe('Valid params', function() {
+            
+            it('should save the issue', function(done) {
 
-        it('should return Bad Request', function(){
-            return chai.request(testIssue)
-                .post('/issues')
-                .type('form')
-                .send({
-                    title: "First issue",
-                    description: "Something is not working",
+                const issue = {
+                    title: "Second issue",
+                    description: "Create function test",
                     name: "Alena"
-                })
-                .then(function(res){
-                    throw new Error('Invalid content type!');
-                })
-                .catch(function(err){
-                    expect(err).to.have.status(400);
+                };
+
+                testIssue.create(issue, (err, data) => {
+                    expect(err).to.be.null;
+                    
+                    expect(callback).to.have.status(201);
+                    expect(issue).to.be.json;
+                    expect(issue.payload).to.be.an('object').that.includes({ 
+                        title: "Second issue",
+                        description: "Create function test",
+                        name: "Alena"
+                    });
                 });
-        });
-    });
-    describe('A function that shows issues', function() {
-        
-        it('should show the issues', function() {
-           return chai.request(testIssue)
-            .get('/issues')
-            .then(function(res){
-                expect(res).to.have.status(200);
-                expect(res).to.be.json;
-                expect(res.body).to.be.an('array');
-                expect(res.body.results).to.be.an('object');                
+                done();
             });
         });
-
-        it('should return Not found', function(){
-            return chai.request(testIssue)
-                .get('/INVALID_PATH')
-                .then(function(res){
-                    throw new Error('Path exists!');
-                })
-                .catch(function(err){
-                    expect(err).to.have.status(404);
-                });
-        });
-
-    });
-    describe('A function that edits an issue', function() {
-        
-        it('should edit the issues', function(done) {
-            return chai.request(testIssue)
-                .put('/issues/{id}')
-                .send({
-                    description: "Something new",
-                    name: "Not Alena"
-                })
-                .then(function(res){
-                    expect(res).to.have.status(201);
-                    expect(res).to.be.json;
-                    expect(res.body).to.be.an('object').that.includes({ title: "First issue",
-                    description: "Something new",
-                    name: "Not Alena"});
-                });;
-        });
-
-        it('should return Bad Request', function(){
-            return chai.request(testIssue)
-                .put('/issues/{id}')
-                .type('form')
-                .send({
-                    description: "Something new",
-                    name: "Not Alena"
-                })
-                .then(function(res){
-                    throw new Error('Invalid content type!');
-                })
-                .catch(function(err){
+        describe('Invaild params', function() {
+    
+            it('should not save issue', function(done){
+ 
+                const issue = {
+                    title: 0,
+                    name: null
+                };
+                // chai uncaught assertionerror expected object to have property status???
+                testIssue.create(issue, (err, issue) => {
                     expect(err).to.have.status(400);
+                    expect(callback).to.have.status(500);
                 });
-        });
-    });
-    describe('A function that deletes an issue', function() {
-        
-        it('should delete the issue', function(done) {
-            return chai.request(testIssue)
-                .delete('/issues/{id}')
-                .then(function(res){
-                    expect(res).to.have.status(200);
-                    expect(res).to.be.null;
+                done();
             });
         });
+    });
 
-        it('should return Not found if issue doesn\'t exist', function(){
-            return chai.request(testIssue)
-                .delete('/INVALID_PATH')
-                .then(function(res){
-                    throw new Error('Issue does\'t exist!');
-                })
-                .catch(function(err){
-                    expect(err).to.have.status(404);
+    describe('View issues function', function(){
+
+        describe('Valid params', function(){
+
+            it('should show issues', function(done){
+                testIssue.view((err, issues) => {
+                    expect(err).to.be.null;                    
+
+                    expect(callback).to.have.status(200);
+                    expect(issues.body).to.be.json;
+                    expect(issues.body).to.be.an('array');
+                    expect(issue.body.results).to.be.an('object');                
                 });
+                done();
+            });
+        });
+        describe('Invaild params', function() {
+
+            it('should not show issue', function(done){
+ 
+                testIssue.view((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(404);
+                });
+                done();
+            });
         });
     });
-    describe('A function that marks an issue complete', function() {
-        
-        it('should mark complete the issue', function(done) {
-            return chai.request(testIssue)
-                .patch('/issues/{id}')
-                .send({
-                    completed: "Completed"
-                })
-                .then(function(res){
-                    expect(res).to.have.status(201);
-                    expect(res).to.be.json;
-                    expect(res.body).to.be.an('object').that.includes({
-                    completed: "Completed"});
-                });;
-        });
+    describe('Edit issues function', function(){
+    
+        describe('Valid params', function(){
 
-        it('should return Bad Request', function(){
-            return chai.request(testIssue)
-                .patch('/issues/{id}')
-                .type('form')
-                .send({
-                    completed: "Completed"
-                })
-                .then(function(res){
-                    throw new Error('Invalid content type!');
-                })
-                .catch(function(err){
-                    expect(err).to.have.status(400);
+            it('should edit the issues', function(done) {
+
+                const issue = {
+                    id: "5ab1011717790c3fd0c0fd6f",
+                    title: "Newlly Changed issue",
+                    description: "All good",
+                    name: "Not Alena"
+                };
+
+                testIssue.edit(issue, (err, issue) => {
+                    expect(err).to.be.null;
+                    
+                    expect(callback).to.have.status(201);
+                    expect(issue).to.be.json;
+                    expect(issue.body).to.be.an('object').that.includes({ 
+                        title: "Newlly Changed issue",
+                        description: "All good",
+                        name: "Not Alena"
+                    });
                 });
+                done();
+            });
+        });
+        describe('Invaild params', function() {
+
+            it('should not edit the issue', function(done){
+ 
+                testIssue.edit((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(500);
+                });
+                done();
+            });
         });
     });
-    describe('A function that marks an issue pending', function() {
-        
-        it('should mark pending the issue', function(done) {
-            return chai.request(testIssue)
-                .patch('/issues/{id}')
-                .send({
-                    completed: "Pending"
-                })
-                .then(function(res){
-                    expect(res).to.have.status(201);
-                    expect(res).to.be.json;
-                    expect(res.body).to.be.an('object').that.includes({
-                    completed: "Pending"});
-                });;
-        });
+    describe('Delete issues function', function(){
+    
+        describe('Valid params', function(){
 
-        it('should return Bad Request', function(){
-            return chai.request(testIssue)
-                .patch('/issues/{id}')
-                .type('form')
-                .send({
-                    completed: "Pending"
-                })
-                .then(function(res){
-                    throw new Error('Invalid content type!');
-                })
-                .catch(function(err){
-                    expect(err).to.have.status(400);
+            it('should delete the issues', function(done) {
+
+                const issue = {
+                    id: "5ab0fea36ff7ff3c38402293",
+                };
+
+                testIssue.destroy(issue, (err, issue) => {
+                    expect(err).to.be.null;
+                    
+                    expect(callback).to.have.status(200);
+                    expect(issue).to.be.null;
                 });
+                done();
+            });
+        });
+        describe('Invaild params', function() {
+
+            it('should not delete', function(done){
+ 
+                testIssue.destroy((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(500);
+                });
+                done();
+            });
         });
     });
-    describe('A function that inserts a comment', function() {
-        
-        it('should insert the comment', function(done) {
-            return chai.request(testIssue)
-                .post('/issues/{id}/comments')
-                .send({
-                    comments:[{
-                        text: "My first test comment"
-                    }]
-                })
-                .then(function(res){
-                    expect(res).to.have.status(201);
-                    expect(res).to.be.json;
-                    expect(res.body).to.be.an('array');
-                    expect(res.body.results).to.be.an('object').that.includes({text: "My first test comment"});
-                });
-        });
+    describe('Mark issue complete', function(){
+    
+        describe('Valid params', function(){
 
-        it('should return Bad Request', function(){
-            return chai.request(testIssue)
-                .post('/issues/{id}/comments')
-                .type('form')
-                .send({
-                    comments:[{
-                        text: "My first test comment"
-                    }]
-                })
-                .then(function(res){
-                    throw new Error('Invalid content type!');
-                })
-                .catch(function(err){
-                    expect(err).to.have.status(400);
+            it('should mark complete an issue', function(done) {
+
+                const issue = {
+                    id: "5ab1011717790c3fd0c0fd6f",
+                };
+
+                testIssue.completed(issue, (err, issue) => {
+                    expect(err).to.be.null;
+                    
+                    expect(callback).to.have.status(201);
+                    expect(issue).to.be.json;
+                    expect(issue.body).to.be.an('object').that.includes({ 
+                        completed: "Completed"
+                    });
                 });
+                done();
+            });
         });
-    });    
+        describe('Invaild params', function() {
+
+            it('should not change to completed', function(done){
+ 
+                testIssue.completed((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(500);
+                });
+                done();
+            });
+        });
+    });
+    describe('Mark issue pending', function(){
+    
+        describe('Valid params', function(){
+
+            it('should mark an issue pending', function(done) {
+
+                const issue = {
+                    id: "5ab1011717790c3fd0c0fd6f"
+                };
+
+                testIssue.pending(issue, (err, issue) => {
+                    expect(err).to.be.null;
+                    
+                    expect(callback).to.have.status(201);
+                    expect(issue).to.be.json;
+                    expect(issue.body).to.be.an('object').that.includes({ 
+                        completed: "Pending"
+                    });
+                });
+                done();
+            });
+        });
+        describe('Invaild params', function() {
+
+            it('should not change to pending', function(done){
+ 
+                testIssue.pending((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(500);
+                });
+                done();
+            });
+        });
+    });
+    describe('Add comment on issue', function(){
+    
+        describe('Valid params', function(){
+
+            it('should add comment', function(done) {
+
+                const issue = {
+                    id: "5ab1011717790c3fd0c0fd6f",
+                    text: "last comment"
+                };
+
+                testIssue.comment(issue, (err, issue) => {
+                    expect(err).to.be.null;
+                    
+                    expect(callback).to.have.status(201);
+                    expect(issue).to.be.json;
+                    expect(issue.body).to.be.an('object');
+                });
+                done();
+            });
+        });
+        describe('Invaild params', function() {
+
+            it('should not add comment', function(done){
+ 
+                testIssue.comment((err, issue) => {
+                    expect(err).to.have.status(400);
+                    expect(callback).to.have.status(500);
+                });
+                done();
+            });
+        });
+    });
 });

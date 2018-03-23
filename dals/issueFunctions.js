@@ -2,83 +2,79 @@ const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
 exports.create = (req, res) => {
-    Issue.save({
+    return Issue.create({
         title: req.payload.title,
         description: req.payload.description,
         name: req.payload.name
-    }, (err, issue) => {
+    }, (err, data) => {
         if(err){
-            reply(err).code(500);
+            res.response(err).code(500);
         }
-        return res.response(issue);
+        return res.response(data);
     });
 }
 
-exports.view = (req,res) => {
-    Issue.find({}, (err, issue) => {
+exports.view = (req, res) => {
+    return Issue.find({}, (err, data) => {
         if(err){
-            reply(err).code(404);
+            res.response(err).code(404);
         }
-        return reply(issue);
+        return res.response(data);
     });
 }
 
-exports.edit = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        new: true, // return updated issue
-        runValidators: true
-    }).then((err, issue) => {
+exports.edit = (req, res) => {
+    return Issue.findOneAndUpdate({ _id: req.params.id }, 
+        req.payload, { new: true }, (err, data) => {
+            if(err){
+                res.response(err).code(404);
+            }
+            return res.response(data);
+        });
+}
+
+exports.destroy = (req, res) => {
+    return Issue.findOneAndRemove({ _id: req.params.id }, (err, data) => {
         if(err){
-            reply(err).code(404);
+            res.response(err).code(404);
         }
-        return reply(issue);
+        return res.response(data);
     });
 }
 
-exports.destroy = (req,res) => {
-    Issue.findOneAndRemove({ _id: req.params.id }, (err, issue) => {
+exports.completed = (req, res) => {
+   return Issue.findOneAndUpdate({ _id: req.params.id }, {
+        completed: 'Complete'
+    }, { new: true }, (err, data) => {
         if(err){
-            reply(err).code(404);
+            res.response(err).code(404);
         }
-        return reply(issue);
+        return res.response(data);
     });
 }
 
-exports.completed = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        complete: 'Completed'
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
-}
-
-exports.pending = (req,res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        complete: 'Pending'
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+exports.pending = (req, res) => {
+    return Issue.findOneAndUpdate({ _id: req.params.id }, {
+         completed: 'Pending'
+     }, { new: true }, (err, data) => {
+         if(err){
+            res.response(err).code(404);
+         }
+         return res.response(data);
+     });
 }
 
 exports.comment = (req, res) => {
-    Issue.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        comments: [{
-            text: req.payload.text,
-            createdAt: {
-                type: Date,
-                default: Date.now
-            }
-        }]
-    }).then((err, issue) => {
-        if(err){
-            reply(err).code(404);
-        }
-        return reply(issue);
-    });
+    let issue, comment;
+    return Issue.findOne({ _id: req.params.id })
+        .then((issueForUpdate) => {
+            issue = issueForUpdate;
+
+            comment = {
+                text: req.payload.comment
+            };
+            issue.comments.push(comment);
+
+            return issue.save();
+        });
 }

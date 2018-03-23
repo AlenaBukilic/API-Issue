@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const FileSchema = new mongoose.Schema({
-    url:{
+const FileSchema = new Schema({
+    path:{
         type: String,
         required: true
     },
@@ -10,7 +11,7 @@ const FileSchema = new mongoose.Schema({
         default: Date.now
     },
     issue: [{
-        type: mongoose.Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Issue'
     }]
 });

@@ -2,8 +2,15 @@ const FileController = require('../controllers/fileController.js');
 
 module.exports = [
     {
-        path: '/files',
+        path: '/issues/{issueId}/files',
         method: 'POST',
+        config: {
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data'
+            }
+        },
         handler: FileController.upload
     },
     {

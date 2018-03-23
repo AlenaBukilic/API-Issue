@@ -1,25 +1,21 @@
 const expect = require('chai').expect;
-const model = require('../models/issueModel');
+const model = require('../../models/issueModel');
 
-describe('A function that creates an issue', function() {
+describe('IssueModel - create', function() {
 
-    it('should create the issue', function(done) {
+    it('should check properties', function(done) {
         
         const issue = {
             title: "First issue",
-            description: "Something is not working",
+            description: "Testing issueModel",
             name: "Alena"
         };
 
-        model.issue.create(issue, (err, issue) => {
+        model.create(issue, (err, issue) => {
             expect(err).to.be.null;
 
             expect(issue).to.exist;
             expect(issue).to.be.an('object');
-
-            expect(issue.id).to.ok;
-            expect(issue.id).to.be.a('number');
-            expect(issue.id).to.be.gte(0);
 
             expect(issue.title).to.exist;
             expect(issue.title).to.be.a('string');
@@ -27,7 +23,7 @@ describe('A function that creates an issue', function() {
 
             expect(issue.description).to.exist;
             expect(issue.description).to.be.a('string');
-            expect(issue.description).to.be.equal('Something is not working');
+            expect(issue.description).to.be.equal('Testing issueModel');
 
             expect(issue.name).to.exist;
             expect(issue.name).to.be.a('string');

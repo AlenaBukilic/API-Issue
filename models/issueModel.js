@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const IssueSchema = new mongoose.Schema({
+const IssueSchema = new Schema({
     title: {
         type: String,
         required: 'Please enter your issue title'
@@ -29,7 +30,7 @@ const IssueSchema = new mongoose.Schema({
         }
     }],
     files: [{
-        type: mongoose.Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'File'
     }]
 });

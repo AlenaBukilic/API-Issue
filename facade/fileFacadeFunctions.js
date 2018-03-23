@@ -1,5 +1,5 @@
-const DalsIssueController = require('../dals/fileFunctions');
+const DalsFileController = require('../dals/fileFunctions');
 
-exports.uploadFacade = DalsIssueController.uploadFile;
+exports.uploadFacade = DalsFileController.uploadFile;
 
-exports.downloadFacade = DalsIssueController.downloadFile;
+exports.downloadFacade = DalsFileController.downloadFile;
