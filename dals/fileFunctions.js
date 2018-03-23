@@ -8,7 +8,10 @@ const File = require('../models/fileModel');
 
 const internals = {};
 
-internals.saveFile = (file, issueId, resolve, fileName) => {
+internals.saveFile = (params) => {
+
+    const { file, issueId, fileName, resolve, reject } = params;
+
     File.create({
         path: fileName,
         issue: issueId
@@ -27,17 +30,15 @@ internals.saveFile = (file, issueId, resolve, fileName) => {
     });
 };
 
-exports.uploadFile = (req, res) => {
-
-    const file = req.payload.file;
-    const issueId = req.params.issueId;
+exports.uploadFile = (file, issueId) => {
+    
     return new Promise((resolve, reject) => {
 
         const fileName = Date.now() + '-' + file.hapi.filename;
-
+        const params = { file, issueId, fileName, resolve, reject };
         const wstream = fs.createWriteStream(fileName);
         wstream.on('finish', () => {
-            internals.saveFile(file, issueId, resolve, fileName);
+            internals.saveFile(params);
         });
         wstream.on('error', (err) => {
             return err;
@@ -47,20 +48,22 @@ exports.uploadFile = (req, res) => {
     });
 }
 
-exports.downloadFile = (req, res) => {
+exports.downloadFile = (fileId) => {
 
-    const fileId = req.params.id;
-
-        return File.findOne({ _id: fileId })
+    return new Promise((resolve, reject) => {
+       
+        File.findOne({ _id: fileId })
         .then((file) => {
             
             const path = file.path;
             const rstream = fs.createReadStream(path);
             const extType = mime.lookup(path);
-
-            return res.response(rstream)
+        
+            return resolve(rstream)
                 .type(extType)
                 .header('Content-type', extType)
-        });         
+        })
+        .catch(reject);
+    });         
 }
 

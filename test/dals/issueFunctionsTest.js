@@ -13,46 +13,56 @@ const testIssue = require('../../dals/issueFunctions');
 describe('API issues', function(){
     this.timeout(5000);
 
+    //dropDatabase
+
     describe('Create issue function', function(){
     
         describe('Valid params', function() {
             
-            it('should save the issue', function(done) {
-
-                const issue = {
+            let issue;
+            before((done) => {
+                issue = {
                     title: "Second issue",
                     description: "Create function test",
                     name: "Alena"
                 };
-
-                testIssue.create(issue, (err, data) => {
-                    expect(err).to.be.null;
-                    
-                    expect(callback).to.have.status(201);
-                    expect(issue).to.be.json;
-                    expect(issue.payload).to.be.an('object').that.includes({ 
-                        title: "Second issue",
-                        description: "Create function test",
-                        name: "Alena"
-                    });
-                });
                 done();
+            });
+            it('should save the issue', function(done) {
+
+                testIssue.create(issue)
+                .then((createdIssue) => {
+
+                    expect(createdIssue).to.be.an('object');
+                    expect(createdIssue.title).to.equal(issue.title);
+                    expect(createdIssue.description).to.equal(issue.description);
+                    expect(createdIssue.name).to.equal(issue.name);
+
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
-    
-            it('should not save issue', function(done){
- 
-                const issue = {
+
+            let issue;
+            before((done) => {
+                issue = {
                     title: 0,
                     name: null
                 };
-                // chai uncaught assertionerror expected object to have property status???
-                testIssue.create(issue, (err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(500);
-                });
                 done();
+            });
+    
+            it('should not save issue', function(done){
+
+                testIssue.create(issue)
+                .then(done, (err) => {
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('ValidationError');
+                    done();
+                })
+                .catch(done);
             });
         });
     });
@@ -62,26 +72,30 @@ describe('API issues', function(){
         describe('Valid params', function(){
 
             it('should show issues', function(done){
-                testIssue.view((err, issues) => {
-                    expect(err).to.be.null;                    
 
-                    expect(callback).to.have.status(200);
-                    expect(issues.body).to.be.json;
-                    expect(issues.body).to.be.an('array');
-                    expect(issue.body.results).to.be.an('object');                
-                });
-                done();
+                testIssue.view()
+                .then((issues) => {
+
+                    expect(issues).to.be.an('array');
+
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
 
             it('should not show issue', function(done){
- 
-                testIssue.view((err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(404);
-                });
-                done();
+
+                testIssue.view()
+                .then(done, (err) => {
+                    expect(err).to.be.an('Error');
+                    // done envoked with non error
+                    // how to make err case for view?
+                    done();
+                })
+                .catch(done);
+
             });
         });
     });
@@ -89,38 +103,52 @@ describe('API issues', function(){
     
         describe('Valid params', function(){
 
-            it('should edit the issues', function(done) {
-
-                const issue = {
-                    id: "5ab1011717790c3fd0c0fd6f",
-                    title: "Newlly Changed issue",
+            let issue, issueId;
+            before((done) => {
+                issue = {
+                    id: "5ab3e2e43a903617c07074f5",
+                    title: "Changed issue",
                     description: "All good",
                     name: "Not Alena"
                 };
-
-                testIssue.edit(issue, (err, issue) => {
-                    expect(err).to.be.null;
-                    
-                    expect(callback).to.have.status(201);
-                    expect(issue).to.be.json;
-                    expect(issue.body).to.be.an('object').that.includes({ 
-                        title: "Newlly Changed issue",
-                        description: "All good",
-                        name: "Not Alena"
-                    });
-                });
+                issueId = issue.id;
                 done();
+            });
+            it('should edit the issue', function(done) {
+
+                testIssue.edit(issueId, issue)
+                .then((issueEdit) => {
+
+                    expect(issueEdit).to.be.an('object');
+                    expect(issueEdit.title).to.equal(issue.title);
+                    expect(issueEdit.description).to.equal(issue.description);
+                    expect(issueEdit.name).to.equal(issue.name);
+
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
 
-            it('should not edit the issue', function(done){
- 
-                testIssue.edit((err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(500);
-                });
+            let issue;
+            before((done) => {
+                issue = {
+                    title: 0,
+                    name: null
+                };
                 done();
+            });
+    
+            it('should not edit the issue', function(done){
+
+                testIssue.edit(issue)
+                .then(done, (err) => {
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('CastError');
+                    done();
+                })
+                .catch(done);
             });
         });
     });
@@ -128,30 +156,41 @@ describe('API issues', function(){
     
         describe('Valid params', function(){
 
+            let issueId;
+            before((done) => {
+                const issue = {
+                    id: "5ab4a6eaa91bf509d0aaac0d"
+                };
+                issueId = issue.id;
+                done();
+            });
+
             it('should delete the issues', function(done) {
 
-                const issue = {
-                    id: "5ab0fea36ff7ff3c38402293",
-                };
-
-                testIssue.destroy(issue, (err, issue) => {
-                    expect(err).to.be.null;
-                    
-                    expect(callback).to.have.status(200);
-                    expect(issue).to.be.null;
-                });
-                done();
+                testIssue.destroy(issueId)
+                .then((issueDelete) => {
+                    expect(issueDelete).to.be.an('object');
+                })
+                .then((issue) => {
+                    expect(issue).to.be.undefined;
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
 
+            const issueId = "1";
+
             it('should not delete', function(done){
- 
-                testIssue.destroy((err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(500);
-                });
-                done();
+
+                testIssue.destroy(issueId)
+                .then(done, (err) => {
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('CastError');
+                    done();
+                })
+                .catch(done);
             });
         });
     });
@@ -159,33 +198,41 @@ describe('API issues', function(){
     
         describe('Valid params', function(){
 
+            let issueId;
+            before((done) => {
+                issue = {
+                    id: "5ab25c27f608fb1f201413e5"
+                };
+                issueId = issue.id;
+                done();
+            });
+
             it('should mark complete an issue', function(done) {
 
-                const issue = {
-                    id: "5ab1011717790c3fd0c0fd6f",
-                };
+                testIssue.completed(issueId)
+                .then((issueMarkComplete) => {
 
-                testIssue.completed(issue, (err, issue) => {
-                    expect(err).to.be.null;
-                    
-                    expect(callback).to.have.status(201);
-                    expect(issue).to.be.json;
-                    expect(issue.body).to.be.an('object').that.includes({ 
-                        completed: "Completed"
-                    });
-                });
-                done();
+                    expect(issueMarkComplete).to.be.an('object');
+                    expect(issueMarkComplete.completed).to.equal('Complete');
+
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
 
+            const issueId = '1';
+
             it('should not change to completed', function(done){
- 
-                testIssue.completed((err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(500);
-                });
-                done();
+
+                testIssue.completed(issueId)
+                .then(done, (err) => {
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('CastError');            
+                    done();
+                })
+                .catch(done);
             });
         });
     });
@@ -193,33 +240,41 @@ describe('API issues', function(){
     
         describe('Valid params', function(){
 
-            it('should mark an issue pending', function(done) {
-
-                const issue = {
-                    id: "5ab1011717790c3fd0c0fd6f"
+            let issueId;
+            before((done) => {
+                issue = {
+                    id: "5ab25c27f608fb1f201413e5"
                 };
-
-                testIssue.pending(issue, (err, issue) => {
-                    expect(err).to.be.null;
-                    
-                    expect(callback).to.have.status(201);
-                    expect(issue).to.be.json;
-                    expect(issue.body).to.be.an('object').that.includes({ 
-                        completed: "Pending"
-                    });
-                });
+                issueId = issue.id;
                 done();
+            });
+
+            it('should mark pending an issue', function(done) {
+
+                testIssue.pending(issueId)
+                .then((issueMarkPending) => {
+
+                    expect(issueMarkPending).to.be.an('object');
+                    expect(issueMarkPending.completed).to.equal('Pending');
+
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
 
+            const issueId = '1';
+
             it('should not change to pending', function(done){
- 
-                testIssue.pending((err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(500);
-                });
-                done();
+
+                testIssue.pending(issueId)
+                .then(done, (err) => {
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('CastError');            
+                    done();
+                })
+                .catch(done);
             });
         });
     });
@@ -227,33 +282,55 @@ describe('API issues', function(){
     
         describe('Valid params', function(){
 
+            let issueId, issue;
+            before((done) => {
+                issue = {
+                    id: "5ab25c27f608fb1f201413e5",
+                    comments: {
+                        text: "test comment"                    
+                    }
+                };
+                issueId = issue.id;
+                done();
+            });
+
             it('should add comment', function(done) {
 
-                const issue = {
-                    id: "5ab1011717790c3fd0c0fd6f",
-                    text: "last comment"
-                };
-
-                testIssue.comment(issue, (err, issue) => {
-                    expect(err).to.be.null;
+                testIssue.comment(issueId, issue)
+                .then((issueComment) => {
                     
-                    expect(callback).to.have.status(201);
-                    expect(issue).to.be.json;
-                    expect(issue.body).to.be.an('object');
-                });
-                done();
+                    expect(issueComment).to.be.an('object');                    
+                    expect(issueComment.comments[issueComment.comments.length - 1].text).to.equal(issue.comments.text);
+
+                    done();
+                }, done)
+                .catch(done);
             });
         });
         describe('Invaild params', function() {
 
-            it('should not add comment', function(done){
- 
-                testIssue.comment((err, issue) => {
-                    expect(err).to.have.status(400);
-                    expect(callback).to.have.status(500);
-                });
+            let issueId, issue;
+            before((done) => {
+                issue = {
+                    id: "1",
+                    comments: {
+                        text: undefined                    
+                    }
+                };
+                issueId = issue.id;
                 done();
+            });
+            it('should not add comment', function(done){
+
+                testIssue.comment(issueId, issue)
+                .then(done, (err) => {
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('CastError');            
+                    done();
+                })
+                .catch(done);
             });
         });
     });
 });
+

@@ -1,80 +1,104 @@
 const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
-exports.create = (req, res) => {
-    return Issue.create({
-        title: req.payload.title,
-        description: req.payload.description,
-        name: req.payload.name
-    }, (err, data) => {
-        if(err){
-            res.response(err).code(500);
-        }
-        return res.response(data);
-    });
-}
+exports.create = (issue) => {
 
-exports.view = (req, res) => {
-    return Issue.find({}, (err, data) => {
-        if(err){
-            res.response(err).code(404);
-        }
-        return res.response(data);
-    });
-}
-
-exports.edit = (req, res) => {
-    return Issue.findOneAndUpdate({ _id: req.params.id }, 
-        req.payload, { new: true }, (err, data) => {
+    return new Promise((resolve, reject) => {
+        Issue.create({
+            title: issue.title,
+            description: issue.description,
+            name: issue.name
+        }, (err, data) => {
             if(err){
-                res.response(err).code(404);
+                return reject(err);
             }
-            return res.response(data);
+            return resolve(data);
         });
-}
-
-exports.destroy = (req, res) => {
-    return Issue.findOneAndRemove({ _id: req.params.id }, (err, data) => {
-        if(err){
-            res.response(err).code(404);
-        }
-        return res.response(data);
     });
 }
 
-exports.completed = (req, res) => {
-   return Issue.findOneAndUpdate({ _id: req.params.id }, {
-        completed: 'Complete'
-    }, { new: true }, (err, data) => {
-        if(err){
-            res.response(err).code(404);
-        }
-        return res.response(data);
+exports.view = (filterParams) => {
+
+    return new Promise((resolve, reject) => {
+        Issue.find({}, (err, data) => {
+            if(err){
+                return reject(err);
+            }
+            return resolve(data);
+        });
     });
 }
 
-exports.pending = (req, res) => {
-    return Issue.findOneAndUpdate({ _id: req.params.id }, {
-         completed: 'Pending'
-     }, { new: true }, (err, data) => {
-         if(err){
-            res.response(err).code(404);
-         }
-         return res.response(data);
-     });
+exports.edit = (issueId, issueBody) => {
+
+    return new Promise((resolve, reject) => {
+        Issue.findOneAndUpdate({ _id: issueId }, issueBody, { new: true}, (err, data) => {
+            if(err){
+                return reject(err);
+            }
+            return resolve(data);
+        });
+    });
 }
 
-exports.comment = (req, res) => {
-    let issue, comment;
-    return Issue.findOne({ _id: req.params.id })
+exports.destroy = (issueId) => {
+
+    return new Promise((resolve, reject) => {
+        Issue.findOneAndRemove({ _id: issueId }, (err, data) => {
+            if(err){
+                return reject(err);
+            }
+            return resolve(data);
+        });
+    });
+}
+
+exports.completed = (issueId) => {
+
+    return new Promise((resolve, reject) => {
+        Issue.findOneAndUpdate({ _id: issueId }, {
+            completed: 'Complete'
+        }, { new: true }, (err, data) => {
+            if(err){
+                reject(err);
+            }
+            return resolve(data);
+        });
+    });
+}
+
+exports.pending = (issueId) => {
+
+    return new Promise((resolve, reject) => {
+        Issue.findOneAndUpdate({ _id: issueId }, {
+            completed: 'Pending'
+        }, { new: true }, (err, data) => {
+            if(err){
+                reject(err);
+            }
+            return resolve(data);
+        });
+    });
+}
+
+exports.comment = (issueId, issueBody) => {
+
+    return new Promise((resolve, reject) => {
+        let issue, comment;
+        Issue.findOne({ _id: issueId})
         .then((issueForUpdate) => {
             issue = issueForUpdate;
 
             comment = {
-                text: req.payload.comment
+                text: issueBody.comments.text
             };
+           
             issue.comments.push(comment);
 
             return issue.save();
-        });
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+    
 }
