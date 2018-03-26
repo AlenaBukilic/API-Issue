@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
 exports.create = (issue) => {
-
-    return new Promise((resolve, reject) => {
-        Issue.create({
-            title: issue.title,
+      return new Promise((resolve, reject) => {
+         Issue.create({
+             title: issue.title,
             description: issue.description,
             name: issue.name
         }, (err, data) => {

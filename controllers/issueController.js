@@ -6,7 +6,7 @@ exports.create = (req, res) => {
         description: req.payload.description,
         name: req.payload.name
     };
-    return FacadeIssueController.createFacade(issue); 
+    return FacadeIssueController.createFacade(issue);
 };
 
 exports.view = (req, res) => {

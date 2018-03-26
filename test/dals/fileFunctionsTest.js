@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = require('chai').expect;
 const mongoose = require('mongoose');
+const fs = require('fs');
 const stream = require('stream');
 
 chai.use(require('chai-http'));
@@ -16,34 +17,32 @@ describe('API files', function(){
 
     //dropDatabase
 
-    describe('Upload file function', function(){
+    describe.only('Upload file function', function(){
        
         describe('Valid params', function(){
 
-            let issueId, file;
+            let file, issueId, fileName, path, params;
             before((done) => {
-                const issue = {
-                    id: "5ab25c27f608fb1f201413e5"
-                };
-                issueId = issue.id;
-
-                // how to insert real file in test or how to test without one?
-                file = {
-                    path: 'fakeFile.txt',
-                    filename: 'fakeFile' 
+                file = { 
+                    path: "./tmp/fakeFile.txt",
+                    fileName: "fakeFile.txt",
+                    issueId: "5ab8d3a3b547d91ab0aef53e"
                 }
+                fileName = file.fileName;
+                issueId = file.issueId;
+                path = file.path;
+                params = { issueId, fileName, path };
                 done();
             });
 
             it('should upload file', function(done){
                 
-                testFile.uploadFile(file, issueId)
+                testFile.uploadFile(params)
                 .then((file) => {
 
                     expect(file).to.be.an('object');
-                    expect(file.path).to.not.equal(undefined);
-                    expect(file.issue).to.not.equal(undefined);
-                    
+                    expect(file.path).to.equal(path);
+                    expect(file.fileName).to.equal(fileName);                  
 
                     done();
                 }, done)
@@ -52,22 +51,23 @@ describe('API files', function(){
         });
         describe('Invaild params', function() {
 
-            let issueId, file;
+            let file, issueId, fileName, path, params;
             before((done) => {
-                const issue = {
-                    id: "5ab25c27f608fb1f201413e5"
-                };
-                issueId = issue.id;
-                file = "file.doc";
-
+                file = { 
+                    path: undefined,
+                    issueId: "5ab8d3a3b547d91ab0ae53e"
+                }
+                issueId = file.issueId;
+                path = file.path;
+                params = { issueId, fileName, path };
                 done();
             });
             it('should not upload', function(done){
 
-                testFile.uploadFile(file, issueId)
+                testFile.uploadFile(params)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err.name).to.equal('TypeError');            
+                    expect(err.name).to.equal('ValidationError');            
                     done();
                 })
                 .catch(done);

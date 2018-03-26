@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 
 chai.use(require('chai-http'));
 
-const testFileController = require('../controllers/fileController');
+const testFileController = require('../../controllers/fileController');
 
 describe('Check controller file functions', function(){
     this.timeout(5000);

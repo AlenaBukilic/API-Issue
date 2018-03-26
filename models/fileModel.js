@@ -6,6 +6,10 @@ const FileSchema = new Schema({
         type: String,
         required: true
     },
+    fileName:{
+        type: String,
+        required: true
+    },
     created: {
         type: Date,
         default: Date.now

@@ -6,45 +6,29 @@ const path = require('path');
 const Issue = require(path.resolve('./models/issueModel'));
 const File = require('../models/fileModel');
 
-const internals = {};
+exports.uploadFile = (params) => {
 
-internals.saveFile = (params) => {
+    const { issueId, fileName, path } = params;
 
-    const { file, issueId, fileName, resolve, reject } = params;
-
-    File.create({
-        path: fileName,
-        issue: issueId
-    }, (err, file) => {
-        if(err){
-            return reject(err);
-        }
-
-        Issue.findOne({ _id: issueId })
-        .then((issue) => {
-            issue.files.push(file._id);
-            issue.save().then((data) => {
-                return resolve(file);
+    return new Promise((resolve, reject) => {
+ 
+        File.create({
+            path: path,
+            fileName: fileName,
+            issue: issueId
+        }, (err, file) => {
+            if(err){
+                return reject(err);
+            }
+            
+            Issue.findOne({ _id: issueId })
+            .then((issue) => {
+                issue.files.push(file._id);
+                issue.save().then((data) => {
+                    return resolve(file);
+                });
             });
         });
-    });
-};
-
-exports.uploadFile = (file, issueId) => {
-    
-    return new Promise((resolve, reject) => {
-
-        const fileName = Date.now() + '-' + file.hapi.filename;
-        const params = { file, issueId, fileName, resolve, reject };
-        const wstream = fs.createWriteStream(fileName);
-        wstream.on('finish', () => {
-            internals.saveFile(params);
-        });
-        wstream.on('error', (err) => {
-            return err;
-        });
-
-        file.pipe(wstream);
     });
 }
 
