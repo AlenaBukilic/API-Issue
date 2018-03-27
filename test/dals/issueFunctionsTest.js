@@ -87,11 +87,10 @@ describe('API issues', function(){
 
             it('should not show issue', function(done){
 
-                testIssue.view()
+                testIssue.view(issue)
                 .then(done, (err) => {
-                    expect(err).to.be.an('Error');
-                    // done envoked with non error
-                    // how to make err case for view?
+                    expect(err).to.be.an('object');
+                    expect(err.name).to.equal('ReferenceError');
                     done();
                 })
                 .catch(done);
