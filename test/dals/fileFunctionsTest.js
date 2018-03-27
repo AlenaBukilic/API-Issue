@@ -80,8 +80,7 @@ describe('API files', function(){
 
             let fileId;
             before((done) => {
-                fileId = "5ab4d2e254eef13bd0c4a954";
-               
+                fileId = "5aba3427d2b3db26a8e2d076";
                 done();
             });
 
@@ -89,17 +88,14 @@ describe('API files', function(){
                 
                 testFile.downloadFile(fileId)
                 .then((fileExport) => {
-
                     expect(fileExport).to.be.an('object');
-                    // check if file iz ReadStream /stream.Readable?
-                    expect(fileExport).to.be.equal(stream.Readable);                    
-
+                    expect(fileExport.path).to.not.null;                                                          
                     done();
                 }, done)
                 .catch(done);
             });
         });
-        describe('Invaild params', function() {
+        describe.only('Invaild params', function() {
 
             let fileId;
             before((done) => {
