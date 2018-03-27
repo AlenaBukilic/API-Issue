@@ -10,7 +10,7 @@ const File = require(path.resolve('./models/fileModel'));
 
 const testRoutes = require('../../routes/issueRoutes');
 
-describe('Routes requests', function(){
+describe('Issue requests', function(){
 
     const request = chai.request;
 
@@ -289,7 +289,7 @@ describe('Routes requests', function(){
                 .catch(done);
             });
         });
-        describe.only('Invaild params', function() {
+        describe('Invaild params', function() {
 
             let issue;
             before((done) => {
