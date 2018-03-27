@@ -17,7 +17,7 @@ describe('API files', function(){
 
     //dropDatabase
 
-    describe.only('Upload file function', function(){
+    describe('Upload file function', function(){
        
         describe('Valid params', function(){
 
