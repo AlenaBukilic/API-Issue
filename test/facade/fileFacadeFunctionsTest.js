@@ -53,5 +53,47 @@ describe('Facade', function(){
                 .catch(done);
             });
         });
-    });    
+    });
+    describe('Download file function', function(){
+        
+        describe('Valid params', function(){
+
+            let fileId;
+            before((done) => {
+                fileId = "5aba3427d2b3db26a8e2d076";
+                done();
+            });
+
+            it('should go to download dals', function(done){
+                
+                testSave.downloadFacade(fileId)
+                .then((result) => {
+                    expect(result).to.be.an('object');
+                    expect(result.path).to.not.null;
+                    done();
+                })
+                .catch(done);
+            });
+
+        });  
+        describe('Invaild params', function() {
+
+            let fileId;
+            before((done) => {
+                fileId = "1";
+                done();
+            });
+            it('should not save to hard disk', function(done){
+
+                testSave.downloadFacade(fileId)
+                .then(done, (err) => {
+                    expect(err).to.not.be.null;
+                    expect(err.name).to.equal('CastError');            
+                    done();
+                })
+                .catch(done);
+            });
+        });  
+    });
+        
 });

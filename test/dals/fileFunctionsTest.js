@@ -15,8 +15,6 @@ const testFile = require('../../dals/fileFunctions');
 describe('API files', function(){
     this.timeout(5000);
 
-    //dropDatabase
-
     describe('Upload file function', function(){
        
         describe('Valid params', function(){
@@ -95,12 +93,11 @@ describe('API files', function(){
                 .catch(done);
             });
         });
-        describe.only('Invaild params', function() {
+        describe('Invaild params', function() {
 
             let fileId;
             before((done) => {
                 fileId = "1";
-               
                 done();
             });
             it('should not save to hard disk', function(done){
