@@ -6,8 +6,8 @@ describe('FileModel - create', function() {
     it('should check properties', function(done) {
         
         const file = {
-            path: "file.doc"
-            
+            path: "./tmp/fakeFile.txt",
+            fileName: "fakeFile.txt"
         };
 
         model.create(file, (err, file) => {
@@ -18,7 +18,7 @@ describe('FileModel - create', function() {
 
             expect(file.path).to.exist;
             expect(file.path).to.be.a('string');
-            expect(file.path).to.be.equal('file.doc');
+            expect(file.path).to.be.equal('./tmp/fakeFile.txt');
 
             expect(file.issue).to.exist;
             
