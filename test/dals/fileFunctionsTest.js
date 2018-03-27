@@ -100,7 +100,7 @@ describe('API files', function(){
                 fileId = "1";
                 done();
             });
-            it('should not save to hard disk', function(done){
+            it('should not download', function(done){
 
                 testFile.downloadFile(fileId)
                 .then(done, (err) => {

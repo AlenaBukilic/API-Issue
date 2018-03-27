@@ -83,7 +83,7 @@ describe('Facade', function(){
                 fileId = "1";
                 done();
             });
-            it('should not save to hard disk', function(done){
+            it('should not download', function(done){
 
                 testSave.downloadFacade(fileId)
                 .then(done, (err) => {
