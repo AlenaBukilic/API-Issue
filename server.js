@@ -14,7 +14,7 @@ const issueRoutes = require('./routes/issueRoutes.js');
 const fileRoutes = require('./routes/fileRoutes.js');
 
 // import environmental variables from our variables.env file
-require('dotenv').config({ path: 'variables.env' });
+require('dotenv').config({ path: 'config/variables.env' });
 
 // Connect to our Database and handle any bad connections
 mongoose.connect(process.env.DATABASE);

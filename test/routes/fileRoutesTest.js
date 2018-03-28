@@ -10,7 +10,19 @@ const Issue = require('../../models/issueModel');
 const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
 
+const seeder = require('../common.js');
+
 describe('File requests', function(){
+
+    let testIssue, testIssueId;
+    beforeEach((done) => {
+       seeder.createTestIssue()
+        .then((result) => {
+            testIssue = result;
+            testIssueId = testIssue._id;
+            done();
+        });
+    });
 
     const request = chai.request;
 
