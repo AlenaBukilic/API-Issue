@@ -1,4 +1,5 @@
 const IssueController = require('../controllers/issueController.js');
+const Joi = require('joi');
 
 module.exports = [
     {
@@ -22,14 +23,16 @@ module.exports = [
         handler: IssueController.destroy
     },
     {
-        path: '/issues/{id}/markCompleted',
+        path: '/patch/{id}/{status}',
         method: 'PATCH',
-        handler: IssueController.markCompleted
-    },
-    {
-        path: '/issues/{id}/markPending',
-        method: 'PATCH',
-        handler: IssueController.markPending
+        handler: IssueController.statusChange,
+        options: {
+            validate: {
+                params: {
+                    status: 'complete' || 'pending'
+                }
+            }
+        }
     },
     {
         path: '/issues/{id}/comments',

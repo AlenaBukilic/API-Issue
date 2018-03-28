@@ -183,19 +183,18 @@ describe('Issue requests', function(){
             });
         });
     });
-    describe('Mark complete issue', function(){        
+    describe('Change status issue', function(){        
 
         describe('Valid params', function() {
             
-            it('should mark complete the issue', function(done) {
+            it('should change status of issue', function(done) {
                 request('http://localhost:8000')
-                .patch('/issues/'+ testIssueId +'/markCompleted')
+                .patch('/patch/'+ testIssueId + '/complete')
                 .then((response) => {
-                    
                     const createdIssue = response.body;
                     expect(response).to.have.status(200);
                     expect(createdIssue).to.be.an('object');
-                    expect(createdIssue.completed).to.equal('Complete');
+                    expect(createdIssue.status).to.equal('complete');
 
                     done();
                 }, done)
@@ -203,50 +202,13 @@ describe('Issue requests', function(){
             });
         });
         describe('Invaild params', function() {
-
-            const testIssueIdInvalid = 1;
     
-            it('should not mark complete issue', function(done){
+            it('should not change status of issue', function(done){
                 request('http://localhost:8000')
-                .patch('/issues/' + testIssueIdInvalid + '/markCompleted')
+                .patch('/patch/' + testIssueId + '/alena')
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);                    
-                    done();
-                })
-                .catch(done);
-            });
-        });
-    });
-    describe('Mark pending issue', function(){        
-
-        describe('Valid params', function() {
-            
-            it('should mark pending the issue', function(done) {
-                request('http://localhost:8000')
-                .patch('/issues/' + testIssueId + '/markPending')
-                .then((response) => {
-                    
-                    const createdIssue = response.body;
-                    expect(response).to.have.status(200);                    
-                    expect(createdIssue).to.be.an('object');
-                    expect(createdIssue.completed).to.equal('Pending');
-
-                    done();
-                }, done)
-                .catch(done);
-            });
-        });
-        describe('Invaild params', function() {
-
-            const testIssueIdInvalid = 1;            
-    
-            it('should not mark pending issue', function(done){
-                request('http://localhost:8000')
-                .patch('/issues/' + testIssueIdInvalid + '/markPending')
-                .then(done, (err) => {
-                    expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);
+                    expect(err).to.have.status(400);                    
                     done();
                 })
                 .catch(done);

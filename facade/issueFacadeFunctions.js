@@ -8,8 +8,6 @@ exports.editFacade = DalsIssueController.edit;
 
 exports.destroyFacade = DalsIssueController.destroy;
 
-exports.markCompletedFacade = DalsIssueController.completed;
-
-exports.markPendingFacade = DalsIssueController.pending;
+exports.statusChangeFacade = DalsIssueController.statusChange;
 
 exports.commentFacade = DalsIssueController.comment;

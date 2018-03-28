@@ -3,6 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose');
 const mime = require('mime-types');
+const Joi = require('joi');
 
 const Issue = require('../models/issueModel');
 const path = require('path');
@@ -55,7 +56,6 @@ exports.createTestIssue = () => {
         });
     });
 };
-
 
 afterEach((done) => {
     mongoose.connect(db,() => {

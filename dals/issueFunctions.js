@@ -52,25 +52,10 @@ exports.destroy = (issueId) => {
     });
 }
 
-exports.completed = (issueId) => {
-
+exports.statusChange = (issueId, issueStatus) => {
     return new Promise((resolve, reject) => {
         Issue.findOneAndUpdate({ _id: issueId }, {
-            completed: 'Complete'
-        }, { new: true }, (err, data) => {
-            if(err){
-                reject(err);
-            }
-            return resolve(data);
-        });
-    });
-}
-
-exports.pending = (issueId) => {
-
-    return new Promise((resolve, reject) => {
-        Issue.findOneAndUpdate({ _id: issueId }, {
-            completed: 'Pending'
+            status: issueStatus
         }, { new: true }, (err, data) => {
             if(err){
                 reject(err);

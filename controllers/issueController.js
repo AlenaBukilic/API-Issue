@@ -27,14 +27,10 @@ exports.destroy = (req, res) => {
     return FacadeIssueController.destroyFacade(issueId);
 }
 
-exports.markCompleted = (req, res) => {
+exports.statusChange = (req, res) => {
     const issueId = req.params.id;
-    return FacadeIssueController.markCompletedFacade(issueId);
-}
-
-exports.markPending = (req, res) => {
-    const issueId = req.params.id;
-    return FacadeIssueController.markPendingFacade(issueId);
+    const issueStatus = req.params.status;
+    return FacadeIssueController.statusChangeFacade(issueId, issueStatus);
 }
 
 exports.comment = (req, res) => {
