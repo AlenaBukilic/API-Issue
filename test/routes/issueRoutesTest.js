@@ -10,7 +10,7 @@ const File = require(path.resolve('./models/fileModel'));
 
 const seeder = require('../common.js');
 
-describe.only('Issue requests', function(){
+describe('Issue requests', function(){
 
     let testIssue, testIssueId;
     beforeEach((done) => {

@@ -9,9 +9,20 @@ chai.use(require('chai-http'));
 const Issue = require('../../models/issueModel');
 const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
-const FacadeFileController = require('../../facade/fileFacadeFunctions.js');
 
+const FacadeFileController = require('../../facade/fileFacadeFunctions.js');
 const seeder = require('../common.js');
+
+const binaryParser = function (res, cb) {
+    res.setEncoding("binary");
+    res.data = "";
+    res.on("data", function (chunk) {
+      res.data += chunk;
+    });
+    res.on("end", function () {
+      cb(null, new Buffer(res.data, "binary"));
+    });
+};
 
 describe('File requests', function(){
 
@@ -78,10 +89,12 @@ describe('File requests', function(){
             it('should download file', function(done){                
                 request('http://localhost:8000')
                 .get('/files/' + testFileId)
+                .buffer()
+                .parse(binaryParser)
                 .then((response) => {
                     expect(response).to.not.be.null;
                     expect(response).to.have.status(200);
-                    expect(response.text).to.include('blah')
+                    expect('Content-Type', 'text/plain');
                     done();
                 }, done)
                 .catch(done);
@@ -94,6 +107,8 @@ describe('File requests', function(){
             it('should not download file', function(done){
                 request('http://localhost:8000')
                 .get('/files/' + testFileIdInvalid)
+                .buffer()
+                .parse(binaryParser)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err).to.have.status(500);
