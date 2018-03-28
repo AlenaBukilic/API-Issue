@@ -9,17 +9,28 @@ chai.use(require('chai-http'));
 const Issue = require('../../models/issueModel');
 const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
+const FacadeFileController = require('../../facade/fileFacadeFunctions.js');
 
 const seeder = require('../common.js');
 
 describe('File requests', function(){
 
-    let testIssue, testIssueId;
+    let testIssue, testIssueId, testFile, testFileId;
     beforeEach((done) => {
        seeder.createTestIssue()
         .then((result) => {
             testIssue = result;
             testIssueId = testIssue._id;
+            testFile = fs.createReadStream('./test/facade/fakeFile.txt');
+            testFile.hapi = {};
+            testFile.hapi.filename = "fakeFile.txt";
+            done();
+        });
+    });
+    beforeEach((done) => {
+        FacadeFileController.uploadFacade(testFile, testIssueId)
+        .then((result) => {
+            testFileId = result._id;
             done();
         });
     });
@@ -32,7 +43,7 @@ describe('File requests', function(){
 
             it('should save file', function(done){
                 request('http://localhost:8000')
-                .post('/issues/5ab25c27f608fb1f201413e5/files')
+                .post('/issues/' + testIssueId + '/files')
                 .attach('file', fs.readFileSync('./test/facade/fakeFile.txt'), 'fakeFile.txt')
                 .then((response) => {
                     expect(response).to.not.be.null;
@@ -44,10 +55,12 @@ describe('File requests', function(){
             });
         });
         describe('Invaild params', function() {
-    
+            
+            const testIssueIdInvalid = 1;
+
             it('should not save file', function(done){
                 request('http://localhost:8000')
-                .post('/issues/5aba5d0301f3703b5c72045/comments')
+                .post('/issues/' + testIssueIdInvalid + '/files')
                 .attach('file', fs.readFileSync('./test/facade/fakeFile.txt'), 'fakeFile.txt')
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
@@ -62,9 +75,9 @@ describe('File requests', function(){
 
         describe('Valid params', function() {
 
-            it('should download file', function(done){
+            it('should download file', function(done){                
                 request('http://localhost:8000')
-                .get('/files/5aba9a16c63a752d8c0f6c2f')
+                .get('/files/' + testFileId)
                 .then((response) => {
                     expect(response).to.not.be.null;
                     expect(response).to.have.status(200);
@@ -75,10 +88,12 @@ describe('File requests', function(){
             });
         });
         describe('Invaild params', function() {
-    
+            
+            const testFileIdInvalid = 1;
+
             it('should not download file', function(done){
                 request('http://localhost:8000')
-                .get('/files/5aba9a16c63a72d8c0f6c2f')
+                .get('/files/' + testFileIdInvalid)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err).to.have.status(500);

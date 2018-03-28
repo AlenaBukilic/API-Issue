@@ -41,6 +41,7 @@ describe.only('Issue requests', function(){
                 .then((response) => {
                     
                     const createdIssue = response.body;
+                    expect(response).to.have.status(200);
                     expect(createdIssue).to.be.an('object');
                     expect(createdIssue.title).to.equal(createTestIssueValid.title);
                     expect(createdIssue.description).to.equal(createTestIssueValid.description);
@@ -81,6 +82,7 @@ describe.only('Issue requests', function(){
                 .get('/issues')
                 .then((response) => {
                     const issuesList = response.body;
+                    expect(response).to.have.status(200);
                     expect(issuesList).to.be.an('array');
                     done();
                 }, done)
@@ -118,7 +120,7 @@ describe.only('Issue requests', function(){
                 .then((response) => {
                     
                     const createdIssue = response.body;
-
+                    expect(response).to.have.status(200);
                     expect(createdIssue).to.be.an('object');
                     expect(createdIssue.title).to.equal(newDataTestIssueEditValid.title);
                     expect(createdIssue.description).to.equal(newDataTestIssueEditValid.description);
@@ -155,6 +157,7 @@ describe.only('Issue requests', function(){
                 .delete('/issues/' + testIssueId)
                 .then((response) => { 
                     issue = response.body;
+                    expect(response).to.have.status(200);
                     expect(issue).to.be.an('object');                    
                 })
                 .then((issue) => {
@@ -190,7 +193,7 @@ describe.only('Issue requests', function(){
                 .then((response) => {
                     
                     const createdIssue = response.body;
-
+                    expect(response).to.have.status(200);
                     expect(createdIssue).to.be.an('object');
                     expect(createdIssue.completed).to.equal('Complete');
 
@@ -205,10 +208,10 @@ describe.only('Issue requests', function(){
     
             it('should not mark complete issue', function(done){
                 request('http://localhost:8000')
-                .put('/issues/' + testIssueIdInvalid + '/markCompleted')
+                .patch('/issues/' + testIssueIdInvalid + '/markCompleted')
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(404);                    
+                    expect(err).to.have.status(500);                    
                     done();
                 })
                 .catch(done);
@@ -225,7 +228,7 @@ describe.only('Issue requests', function(){
                 .then((response) => {
                     
                     const createdIssue = response.body;
-
+                    expect(response).to.have.status(200);                    
                     expect(createdIssue).to.be.an('object');
                     expect(createdIssue.completed).to.equal('Pending');
 
@@ -240,10 +243,10 @@ describe.only('Issue requests', function(){
     
             it('should not mark pending issue', function(done){
                 request('http://localhost:8000')
-                .put('/issues/' + testIssueIdInvalid + '/markPending')
+                .patch('/issues/' + testIssueIdInvalid + '/markPending')
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(404);
+                    expect(err).to.have.status(500);
                     done();
                 })
                 .catch(done);
@@ -267,7 +270,7 @@ describe.only('Issue requests', function(){
                 .then((response) => {
                     
                     const createdIssue = response.body;
-
+                    expect(response).to.have.status(200);                    
                     expect(createdIssue).to.be.an('object');
                     expect(createdIssue.comments[createdIssue.comments.length - 1].text).to.equal(commentToAdd.comments.text);
                     
