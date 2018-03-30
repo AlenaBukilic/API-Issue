@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Issue = mongoose.model('Issue');
 
 exports.create = (issue) => {
-      return new Promise((resolve, reject) => {
+      
+    return new Promise((resolve, reject) => {
          Issue.create({
             title: issue.title,
             description: issue.description,
@@ -53,6 +54,7 @@ exports.destroy = (issueId) => {
 }
 
 exports.statusChange = (issueId, issueStatus) => {
+
     return new Promise((resolve, reject) => {
         Issue.findOneAndUpdate({ _id: issueId }, {
             status: issueStatus

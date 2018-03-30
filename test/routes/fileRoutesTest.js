@@ -11,16 +11,16 @@ const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
 
 const FacadeFileController = require('../../facade/fileFacadeFunctions.js');
-const seeder = require('../common.js');
+const seeder = require('../seeder.js');
 
 const binaryParser = function (res, cb) {
-    res.setEncoding("binary");
-    res.data = "";
-    res.on("data", function (chunk) {
+    res.setEncoding('binary');
+    res.data = '';
+    res.on('data', function (chunk) {
         res.data += chunk;
     });
-    res.on("end", function () {
-        cb(null, new Buffer(res.data, "binary"));
+    res.on('end', function () {
+        cb(null, new Buffer(res.data, 'binary'));
     });
 };
 
@@ -34,7 +34,7 @@ describe('File requests', function(){
             testIssueId = testIssue._id;
             testFile = fs.createReadStream('./test/facade/fakeFile.txt');
             testFile.hapi = {};
-            testFile.hapi.filename = "fakeFile.txt";
+            testFile.hapi.filename = 'fakeFile.txt';
             done();
         });
     });
@@ -50,11 +50,11 @@ describe('File requests', function(){
 
     describe('Upload file', function(){        
 
-        describe('Valid params', function() {
+        describe('Valid issue Id', function() {
 
             it('should save file', function(done){
                 request('http://localhost:8000')
-                .post('/issues/' + testIssueId + '/files')
+                .post(`/issues/${testIssueId}/files`)
                 .attach('file', fs.readFileSync('./test/facade/fakeFile.txt'), 'fakeFile.txt')
                 .then((response) => {
                     expect(response).to.not.be.null;
@@ -65,17 +65,15 @@ describe('File requests', function(){
                 .catch(done);
             });
         });
-        describe('Invaild params', function() {
+        describe('Invalid issue Id', function() {
             
-            const testIssueIdInvalid = 1;
-
             it('should not save file', function(done){
                 request('http://localhost:8000')
-                .post('/issues/' + testIssueIdInvalid + '/files')
+                .post(`/issues/1/files`)                
                 .attach('file', fs.readFileSync('./test/facade/fakeFile.txt'), 'fakeFile.txt')
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);
+                    expect(err).to.have.status(400);
                     done();
                 })
                 .catch(done);
@@ -84,34 +82,32 @@ describe('File requests', function(){
     });
     describe('Download file', function(){        
 
-        describe('Valid params', function() {
-
+        describe('Valid file Id', function() {
+            
             it('should download file', function(done){                
                 request('http://localhost:8000')
-                .get('/files/' + testFileId)
+                .get(`/files/${testFileId}`)                
                 .buffer()
                 .parse(binaryParser)
                 .then((response) => {
-                    expect(response).to.not.be.null;
-                    expect(response).to.have.status(200);
-                    expect('Content-Type', 'text/plain');
+                    expect(response).to.have.status(200);                    
+                    expect(response.body).to.be.instanceOf(Buffer);                   
+                    expect(response).to.have.header('content-type', 'text/plain; charset=utf-8');        
                     done();
                 }, done)
                 .catch(done);
             });
         });
-        describe('Invaild params', function() {
-            
-            const testFileIdInvalid = 1;
-
+        describe('Invalid file Id', function() {
+        
             it('should not download file', function(done){
                 request('http://localhost:8000')
-                .get('/files/' + testFileIdInvalid)
+                .get('/files/1')                
                 .buffer()
                 .parse(binaryParser)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);
+                    expect(err).to.have.status(400);
                     done();
                 })
                 .catch(done);

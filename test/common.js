@@ -12,7 +12,7 @@ const File = require(path.resolve('./models/fileModel'));
 const issueRoutes = require('../routes/issueRoutes.js');
 const fileRoutes = require('../routes/fileRoutes.js');
 
-require('dotenv').config({ path: 'config/variablesTest.env' });
+require('dotenv').config({ path: 'variablesDevelopment/variablesTest.env' });
 
 mongoose.connect(process.env.DATABASE);
 mongoose.Promise = global.Promise;
@@ -23,7 +23,6 @@ const server = Hapi.server({
     host: 'localhost',
     port: 8000
 });
-
 
 server.route(issueRoutes);
 server.route(fileRoutes);
@@ -42,21 +41,6 @@ async function start() {
 
 start();
 
-exports.createTestIssue = () => {
-    return new Promise((resolve, reject) => {
-        Issue.create({
-            title: "Route issue",
-            description: "Create route issue test",
-            name: "Blah"
-        }, (err, data) => {
-            if(err){
-                return reject(err);
-            }
-            return resolve(data);
-        });
-    });
-};
-
 afterEach((done) => {
     mongoose.connect(db,() => {
         mongoose.connection.db.dropDatabase(() => {
@@ -64,3 +48,4 @@ afterEach((done) => {
         })    
     })
 });
+

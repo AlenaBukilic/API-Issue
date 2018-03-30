@@ -15,7 +15,7 @@ exports.uploadFile = (params) => {
         File.create({
             path: path,
             fileName: fileName,
-            issue: issueId
+            issue: issueId,
         }, (err, file) => {
             if(err){
                 return reject(err);
@@ -43,9 +43,10 @@ exports.downloadFile = (fileId) => {
             const rstream = fs.createReadStream(path);
             const extType = mime.lookup(path);
         
-            return resolve(rstream)
-                .type(extType)
-                .header('Content-type', extType)
+            return resolve({
+                stream: rstream,
+                type: extType
+            });
         })
         .catch(reject);
     });         

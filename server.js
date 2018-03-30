@@ -15,7 +15,7 @@ const issueRoutes = require('./routes/issueRoutes.js');
 const fileRoutes = require('./routes/fileRoutes.js');
 
 // import environmental variables from our variables.env file
-require('dotenv').config({ path: 'config/variables.env' });
+require('dotenv').config({ path: 'variablesDevelopment/variables.env' });
 
 // Connect to our Database and handle any bad connections
 mongoose.connect(process.env.DATABASE);
@@ -30,7 +30,14 @@ mongoose.connection.on('open', () => {
 // Create a server with a host and port
 const server = Hapi.server({
     host: 'localhost',
-    port: 8000
+    port: 8000,
+    // routes: {
+    //     validate: {
+    //         options: {
+    //             abortEarly: false
+    //         }
+    //     }
+    // }
 });
 
 // Add the route

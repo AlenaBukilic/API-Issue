@@ -8,7 +8,7 @@ const Issue = require('../../models/issueModel');
 const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
 
-const seeder = require('../common.js');
+const seeder = require('../seeder.js');
 
 describe('Issue requests', function(){
 
@@ -55,8 +55,7 @@ describe('Issue requests', function(){
         describe('Invaild params', function() {
 
             const createTestIssueInvalid = {
-                title: undefined,
-                description: 123,
+                title: 654878,
                 name: null
             }
     
@@ -66,7 +65,7 @@ describe('Issue requests', function(){
                 .send(createTestIssueInvalid)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);                   
+                    expect(err).to.have.status(400);                   
                     done();
                 })
                 .catch(done);
@@ -75,7 +74,7 @@ describe('Issue requests', function(){
     });
     describe('View issues', function(){        
 
-        describe('Valid params', function() {
+        describe('Existing issues', function() {
             
             it('should show the issues', function(done) {
                 request('http://localhost:8000')
@@ -89,7 +88,7 @@ describe('Issue requests', function(){
                 .catch(done);
             });
         });
-        describe('Invaild params', function() {
+        describe('Non existing issues', function() {
 
             it('should not show the issues', function(done){
                 request('http://localhost:8000')
@@ -115,7 +114,7 @@ describe('Issue requests', function(){
             
             it('should edit the issue', function(done) {
                 request('http://localhost:8000')
-                .put('/issues/' + testIssueId)
+                .put(`/issues/${testIssueId}`)
                 .send(newDataTestIssueEditValid)
                 .then((response) => {
                     
@@ -133,15 +132,19 @@ describe('Issue requests', function(){
         });
         describe('Invaild params', function() {
 
-            const testIssueIdInvalid = 1;
-    
+            const newDataTestIssueEditInvalid = {
+                title: 123654,
+                description: null,
+                name: false
+            }
+            
             it('should not edit issue', function(done){
                 request('http://localhost:8000')
-                .put('/issues/' + testIssueIdInvalid)
-                .send(testIssue)
+                .put(`/issues/${testIssueId}`)
+                .send(newDataTestIssueEditInvalid)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);                    
+                    expect(err).to.have.status(400);                    
                     done();
                 })
                 .catch(done);
@@ -150,11 +153,11 @@ describe('Issue requests', function(){
     });
     describe('Delete issue', function(){        
 
-        describe('Valid params', function() {
+        describe('Valid Id', function() {
                
             it('should delete the issue', function(done) {
                 request('http://localhost:8000')
-                .delete('/issues/' + testIssueId)
+                .delete(`/issues/${testIssueId}`)
                 .then((response) => { 
                     issue = response.body;
                     expect(response).to.have.status(200);
@@ -167,16 +170,14 @@ describe('Issue requests', function(){
                 .catch(done);
             });
         });
-        describe('Invaild params', function() {
-
-            const testIssueIdInvalid = 1;            
+        describe('Invalid Id', function() {
 
             it('should not delete issue', function(done){
                 request('http://localhost:8000')
-                .delete('/issues/' + testIssueIdInvalid)
+                .delete('/issues/1')                                                
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);                    
+                    expect(err).to.have.status(400);                    
                     done();
                 })
                 .catch(done);
@@ -186,15 +187,20 @@ describe('Issue requests', function(){
     describe('Change status issue', function(){        
 
         describe('Valid params', function() {
+
+            const changeStatusData = {
+                status: 'Complete'
+            }
             
             it('should change status of issue', function(done) {
                 request('http://localhost:8000')
-                .patch('/patch/'+ testIssueId + '/complete')
+                .patch(`/patch/${testIssueId}`)
+                .send(changeStatusData)
                 .then((response) => {
                     const createdIssue = response.body;
                     expect(response).to.have.status(200);
                     expect(createdIssue).to.be.an('object');
-                    expect(createdIssue.status).to.equal('complete');
+                    expect(createdIssue.status).to.equal('Complete');
 
                     done();
                 }, done)
@@ -202,10 +208,15 @@ describe('Issue requests', function(){
             });
         });
         describe('Invaild params', function() {
+
+            const changeStatusDataInvalid = {
+                status: 'Alena'
+            }
     
             it('should not change status of issue', function(done){
                 request('http://localhost:8000')
-                .patch('/patch/' + testIssueId + '/alena')
+                .patch(`/patch/${testIssueId}`)
+                .send(changeStatusDataInvalid)                
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err).to.have.status(400);                    
@@ -227,7 +238,7 @@ describe('Issue requests', function(){
             
             it('should comment the issue', function(done) {
                 request('http://localhost:8000')
-                .post('/issues/' + testIssueId + '/comments')
+                .post(`/issues/${testIssueId}/comments`)
                 .send(commentToAdd)
                 .then((response) => {
                     
@@ -243,15 +254,19 @@ describe('Issue requests', function(){
         });
         describe('Invaild params', function() {
 
-            const testIssueIdInvalid = 1; 
+            const commentToAddInvalid = {
+                comments: {
+                    text: null                    
+                }
+            }
 
             it('should not comment issue', function(done){
                 request('http://localhost:8000')
-                .post('/issues/' + testIssueIdInvalid + '/comments')
-                .send(issue)
+                .post(`/issues/${testIssueId}/comments`)                
+                .send(commentToAddInvalid)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
-                    expect(err).to.have.status(500);
+                    expect(err).to.have.status(400);
                     done();
                 })
                 .catch(done);

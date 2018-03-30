@@ -29,7 +29,7 @@ exports.destroy = (req, res) => {
 
 exports.statusChange = (req, res) => {
     const issueId = req.params.id;
-    const issueStatus = req.params.status;
+    const issueStatus = req.payload.status;
     return FacadeIssueController.statusChangeFacade(issueId, issueStatus);
 }
 

@@ -5,7 +5,16 @@ module.exports = [
     {
         path: '/issues',
         method: 'POST',
-        handler: IssueController.create
+        handler: IssueController.create,
+        options: {
+            validate: {
+                payload: {
+                    title: Joi.string().min(3).max(30),
+                    description: Joi.string().min(3).max(100),
+                    name: Joi.string().min(3).max(20)
+                }
+            }
+        }
     },
     {
         path: '/issues',
@@ -15,21 +24,40 @@ module.exports = [
     {
         path: '/issues/{id}',
         method: 'PUT',
-        handler: IssueController.edit
+        handler: IssueController.edit,
+        options: {
+            validate: {
+                params: {
+                    id: Joi.string().min(24).max(24)
+                },
+                payload: {
+                    title: Joi.string().min(3).max(30),
+                    description: Joi.string().min(3).max(100),
+                    name: Joi.string().min(3).max(20)
+                }
+            }
+        }
     },
     {
         path: '/issues/{id}',
         method: 'DELETE',
-        handler: IssueController.destroy
+        handler: IssueController.destroy,
+        options: {
+            validate: {
+                params: {
+                    id: Joi.string().min(24).max(24)
+                }
+            }
+        }
     },
     {
-        path: '/patch/{id}/{status}',
+        path: '/patch/{id}',
         method: 'PATCH',
         handler: IssueController.statusChange,
         options: {
             validate: {
-                params: {
-                    status: 'complete' || 'pending'
+                payload: {
+                    status: Joi.string().min(7).max(8).regex(/\bcomplete|\bpending/gi)
                 }
             }
         }
@@ -37,6 +65,18 @@ module.exports = [
     {
         path: '/issues/{id}/comments',
         method: 'POST',
-        handler: IssueController.comment
+        handler: IssueController.comment,
+        options: {
+            validate: {
+                params: {
+                    id: Joi.string().min(24).max(24)
+                },
+                payload: {
+                    comments: {
+                        text: Joi.string().min(3).max(150)                        
+                    }
+                }
+            }
+        }
     }
 ];
