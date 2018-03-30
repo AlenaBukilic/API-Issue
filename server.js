@@ -30,14 +30,7 @@ mongoose.connection.on('open', () => {
 // Create a server with a host and port
 const server = Hapi.server({
     host: 'localhost',
-    port: 8000,
-    // routes: {
-    //     validate: {
-    //         options: {
-    //             abortEarly: false
-    //         }
-    //     }
-    // }
+    port: 8000
 });
 
 // Add the route

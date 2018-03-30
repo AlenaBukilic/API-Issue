@@ -56,6 +56,9 @@ module.exports = [
         handler: IssueController.statusChange,
         options: {
             validate: {
+                params: {
+                    id: Joi.string().min(24).max(24)
+                },
                 payload: {
                     status: Joi.string().min(7).max(8).regex(/\bcomplete|\bpending/gi)
                 }
