@@ -6,28 +6,23 @@ const path = require('path');
 const Issue = require(path.resolve('./models/issueModel'));
 const File = require('../models/fileModel');
 
-exports.uploadFile = (params) => {
+const saveModul = require('../saveModul/saveFile');
 
-    const { issueId, fileName, path } = params;
+exports.uploadFile = (params, issueId) => {
+
+    const { fileName, path } = params;    
 
     return new Promise((resolve, reject) => {
- 
+        
         File.create({
             path: path,
             fileName: fileName,
-            issue: issueId,
+            issue: issueId
         }, (err, file) => {
             if(err){
                 return reject(err);
             }
-            
-            Issue.findOne({ _id: issueId })
-            .then((issue) => {
-                issue.files.push(file._id);
-                issue.save().then((data) => {
-                    return resolve(file);
-                });
-            });
+            return resolve(saveModul.saveFileData(file, issueId));
         });
     });
 }
@@ -51,4 +46,3 @@ exports.downloadFile = (fileId) => {
         .catch(reject);
     });         
 }
-

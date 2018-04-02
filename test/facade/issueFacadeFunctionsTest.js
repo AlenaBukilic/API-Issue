@@ -5,36 +5,41 @@ const mongoose = require('mongoose');
 chai.use(require('chai-http'));
 
 const Issue = require('../../models/issueModel');
-const path = require('path');
-const File = require(path.resolve('./models/fileModel'));
-
 const testIssueFacade = require('../../facade/issueFacadeFunctions');
+const seeder = require('../seeder.js');
 
-describe('Facade issues', function(){
+describe('Facade API issues', function(){
     this.timeout(5000);
 
-    describe('Create issue', function(){
+    let fakeIssue, fakeIssueId;
+    beforeEach((done) => {
+       seeder.createTestIssue()
+        .then((result) => {
+            fakeIssue = result;
+            fakeIssueId = fakeIssue._id;
+            done();
+        });
+    });
+
+    describe('Create issue function', function(){
     
         describe('Valid params', function() {
             
-            let issue;
-            before((done) => {
-                issue = {
-                    title: "Second issue",
-                    description: "Create function test",
-                    name: "Alena"
-                };
-                done();
-            });
+            const testIssueCreate = {
+                title: "First issue",
+                description: "Create function dals test",
+                name: "Alena"
+            }
+
             it('should save the issue', function(done) {
 
-                testIssueFacade.createFacade(issue)
+                testIssueFacade.createFacade(testIssueCreate)
                 .then((createdIssue) => {
 
                     expect(createdIssue).to.be.an('object');
-                    expect(createdIssue.title).to.equal(issue.title);
-                    expect(createdIssue.description).to.equal(issue.description);
-                    expect(createdIssue.name).to.equal(issue.name);
+                    expect(createdIssue.title).to.equal(testIssueCreate.title);
+                    expect(createdIssue.description).to.equal(testIssueCreate.description);
+                    expect(createdIssue.name).to.equal(testIssueCreate.name);
 
                     done();
                 }, done)
@@ -43,18 +48,14 @@ describe('Facade issues', function(){
         });
         describe('Invaild params', function() {
 
-            let issue;
-            before((done) => {
-                issue = {
-                    title: 0,
-                    name: null
-                };
-                done();
-            });
+            const testIssueCreateInvalid = {
+                title: 1,
+                name: null
+            }
     
             it('should not save issue', function(done){
 
-                testIssueFacade.createFacade(issue)
+                testIssueFacade.createFacade(testIssueCreateInvalid)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('ValidationError');
@@ -72,27 +73,14 @@ describe('Facade issues', function(){
             it('should show issues', function(done){
 
                 testIssueFacade.viewFacade()
-                .then((issues) => {
+                .then((issuesShown) => {
 
-                    expect(issues).to.be.an('array');
+                    expect(issuesShown).to.be.an('array');
 
                     done();
                 }, done)
                 .catch(done);
-            });
-        });
-        describe('Invaild params', function() {
-
-            it('should not show issue', function(done){
-
-                testIssueFacade.viewFacade(issue)
-                .then(done, (err) => {
-                    expect(err).to.be.an('object');
-                    expect(err.name).to.equal('ReferenceError');
-                    done();
-                })
-                .catch(done);
-
+                
             });
         });
     });
@@ -100,26 +88,20 @@ describe('Facade issues', function(){
     
         describe('Valid params', function(){
 
-            let issue, issueId;
-            before((done) => {
-                issue = {
-                    id: "5ab8d3a3b547d91ab0aef53e",
-                    title: "Changed issue",
-                    description: "All good",
-                    name: "Not Alena"
-                };
-                issueId = issue.id;
-                done();
-            });
+            const testIssueEditData = {
+                title: 'Edited title',
+                description: 'Data for edit',
+                name: 'Alena 2'
+            }
             it('should edit the issue', function(done) {
 
-                testIssueFacade.editFacade(issueId, issue)
-                .then((issueEdit) => {
+                testIssueFacade.editFacade(fakeIssueId, testIssueEditData)
+                .then((issueEdited) => {
 
-                    expect(issueEdit).to.be.an('object');
-                    expect(issueEdit.title).to.equal(issue.title);
-                    expect(issueEdit.description).to.equal(issue.description);
-                    expect(issueEdit.name).to.equal(issue.name);
+                    expect(issueEdited).to.be.an('object');
+                    expect(issueEdited.title).to.equal(testIssueEditData.title);
+                    expect(issueEdited.description).to.equal(testIssueEditData.description);
+                    expect(issueEdited.name).to.equal(testIssueEditData.name);
 
                     done();
                 }, done)
@@ -127,19 +109,10 @@ describe('Facade issues', function(){
             });
         });
         describe('Invaild params', function() {
-
-            let issue;
-            before((done) => {
-                issue = {
-                    title: 0,
-                    name: null
-                };
-                done();
-            });
     
             it('should not edit the issue', function(done){
 
-                testIssueFacade.editFacade(issue)
+                testIssueFacade.editFacade(1, undefined)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');
@@ -153,23 +126,14 @@ describe('Facade issues', function(){
     
         describe('Valid params', function(){
 
-            let issueId;
-            before((done) => {
-                const issue = {
-                    id: "5aba4417b76f4a27c0d44bf7"
-                };
-                issueId = issue.id;
-                done();
-            });
-
             it('should delete the issues', function(done) {
 
-                testIssueFacade.destroyFacade(issueId)
-                .then((issueDelete) => {
-                    expect(issueDelete).to.be.an('object');
+                testIssueFacade.destroyFacade(fakeIssueId)
+                .then((issueForDelete) => {
+                    expect(issueForDelete).to.be.an('object');
                 })
-                .then((issue) => {
-                    expect(issue).to.be.undefined;
+                .then((issueDeleted) => {
+                    expect(issueDeleted).to.be.undefined;
                     done();
                 }, done)
                 .catch(done);
@@ -177,11 +141,9 @@ describe('Facade issues', function(){
         });
         describe('Invaild params', function() {
 
-            const issueId = "1";
-
             it('should not delete', function(done){
 
-                testIssueFacade.destroyFacade(issueId)
+                testIssueFacade.destroyFacade(1)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');
@@ -191,26 +153,21 @@ describe('Facade issues', function(){
             });
         });
     });
-    describe('Mark issue complete', function(){
+    describe('Status change function', function(){
     
         describe('Valid params', function(){
 
-            let issueId;
-            before((done) => {
-                issue = {
-                    id: "5ab25c27f608fb1f201413e5"
-                };
-                issueId = issue.id;
-                done();
-            });
+            const statusData = {
+                status: 'Complete'
+            }
 
-            it('should mark complete an issue', function(done) {
+            it('should change issue status', function(done) {
 
-                testIssueFacade.markCompletedFacade(issueId)
-                .then((issueMarkComplete) => {
+                testIssueFacade.statusChangeFacade(fakeIssueId, statusData.status)
+                .then((issueStatus) => {
 
-                    expect(issueMarkComplete).to.be.an('object');
-                    expect(issueMarkComplete.completed).to.equal('Complete');
+                    expect(issueStatus).to.be.an('object');
+                    expect(issueStatus.status).to.equal('Complete');
 
                     done();
                 }, done)
@@ -219,53 +176,9 @@ describe('Facade issues', function(){
         });
         describe('Invaild params', function() {
 
-            const issueId = '1';
+            it('should not change issue status', function(done){
 
-            it('should not change to completed', function(done){
-
-                testIssueFacade.markCompletedFacade(issueId)
-                .then(done, (err) => {
-                    expect(err).to.be.an('object');
-                    expect(err.name).to.equal('CastError');            
-                    done();
-                })
-                .catch(done);
-            });
-        });
-    });
-    describe('Mark issue pending', function(){
-    
-        describe('Valid params', function(){
-
-            let issueId;
-            before((done) => {
-                issue = {
-                    id: "5ab25c27f608fb1f201413e5"
-                };
-                issueId = issue.id;
-                done();
-            });
-
-            it('should mark pending an issue', function(done) {
-
-                testIssueFacade.markPendingFacade(issueId)
-                .then((issueMarkPending) => {
-
-                    expect(issueMarkPending).to.be.an('object');
-                    expect(issueMarkPending.completed).to.equal('Pending');
-
-                    done();
-                }, done)
-                .catch(done);
-            });
-        });
-        describe('Invaild params', function() {
-
-            const issueId = '1';
-
-            it('should not change to pending', function(done){
-
-                testIssueFacade.markPendingFacade(issueId)
+                testIssueFacade.statusChangeFacade(1, undefined)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');            
@@ -279,25 +192,19 @@ describe('Facade issues', function(){
     
         describe('Valid params', function(){
 
-            let issueId, issue;
-            before((done) => {
-                issue = {
-                    id: "5ab25c27f608fb1f201413e5",
-                    comments: {
-                        text: "test comment"                    
-                    }
-                };
-                issueId = issue.id;
-                done();
-            });
+            const commentData = {
+                comments: {
+                    text: 'some comment text for testing'
+                }
+            }
 
             it('should add comment', function(done) {
 
-                testIssueFacade.commentFacade(issueId, issue)
+                testIssueFacade.commentFacade(fakeIssueId, commentData)
                 .then((issueComment) => {
                     
                     expect(issueComment).to.be.an('object');                    
-                    expect(issueComment.comments[issueComment.comments.length - 1].text).to.equal(issue.comments.text);
+                    expect(issueComment.comments[issueComment.comments.length - 1].text).to.equal(commentData.comments.text);
 
                     done();
                 }, done)
@@ -306,20 +213,9 @@ describe('Facade issues', function(){
         });
         describe('Invaild params', function() {
 
-            let issueId, issue;
-            before((done) => {
-                issue = {
-                    id: "1",
-                    comments: {
-                        text: undefined                    
-                    }
-                };
-                issueId = issue.id;
-                done();
-            });
             it('should not add comment', function(done){
 
-                testIssueFacade.commentFacade(issueId, issue)
+                testIssueFacade.commentFacade(1, undefined)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');            

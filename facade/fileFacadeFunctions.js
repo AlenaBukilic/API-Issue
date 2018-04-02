@@ -13,9 +13,9 @@ exports.uploadFacade = (file, issueId) => {
     
     return new Promise((resolve, reject) => {
 
-        saveModul.saveFile(file, issueId)
+        saveModul.saveFile(file)
             .then((params) => {
-                return resolve(DalsFileController.uploadFile(params));
+                return resolve(DalsFileController.uploadFile(params, issueId));
             })
             .catch(reject);
     });

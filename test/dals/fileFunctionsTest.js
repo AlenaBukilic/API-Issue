@@ -11,37 +11,51 @@ const path = require('path');
 const File = require(path.resolve('./models/fileModel'));
 
 const testFile = require('../../dals/fileFunctions');
+const FacadeFileController = require('../../facade/fileFacadeFunctions.js');
+const seeder = require('../seeder.js');
 
-describe('API files', function(){
+describe('Dals API files', function(){
     this.timeout(5000);
+
+    let fakeIssue, fakeIssueId, fakeFile, fakeFileId;
+    beforeEach((done) => {
+       seeder.createTestIssue()
+        .then((result) => {
+            fakeIssue = result;
+            fakeIssueId = fakeIssue._id;
+            fakeFile = fs.createReadStream('./test/facade/fakeFile.txt');
+            fakeFile.hapi = {};
+            fakeFile.hapi.filename = 'fakeFile.txt';
+            done();
+        });
+    });
+    beforeEach((done) => {
+        FacadeFileController.uploadFacade(fakeFile, fakeIssueId)
+        .then((result) => {
+            fakeFileId = result._id;
+            done();
+        });
+    });
 
     describe('Upload file function', function(){
        
         describe('Valid params', function(){
 
-            let file, issueId, fileName, path, params;
-            before((done) => {
-                file = { 
-                    path: "./tmp/fakeFile.txt",
-                    fileName: "fakeFile.txt",
-                    issueId: "5ab8d3a3b547d91ab0aef53e"
-                }
-                fileName = file.fileName;
-                issueId = file.issueId;
-                path = file.path;
-                params = { issueId, fileName, path };
-                done();
-            });
+            let fileName, path, params;
+            fileName = 'fakeFile.txt';
+            path = './tmp/fakeFile.txt';        
 
             it('should upload file', function(done){
-                
-                testFile.uploadFile(params)
-                .then((file) => {
 
-                    expect(file).to.be.an('object');
-                    expect(file.path).to.equal(path);
-                    expect(file.fileName).to.equal(fileName);                  
+                params = { fileName, path };         
+            
+                testFile.uploadFile(params, fakeIssueId)
+                .then((fileCreated) => {
 
+                    expect(fileCreated).to.be.an('object');
+                    expect(fileCreated.path).to.be.equal(path);
+                    expect(fileCreated.fileName).to.be.equal(fileName);
+                                        
                     done();
                 }, done)
                 .catch(done);
@@ -49,20 +63,15 @@ describe('API files', function(){
         });
         describe('Invaild params', function() {
 
-            let file, issueId, fileName, path, params;
-            before((done) => {
-                file = { 
-                    path: undefined,
-                    issueId: "5ab8d3a3b547d91ab0ae53e"
-                }
-                issueId = file.issueId;
-                path = file.path;
-                params = { issueId, fileName, path };
-                done();
-            });
+            let fileName, path, params;
+            fileName = undefined;
+            path = null;  
+            
             it('should not upload', function(done){
 
-                testFile.uploadFile(params)
+                params = { fileName, path };         
+                
+                testFile.uploadFile(params, fakeIssueId)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err.name).to.equal('ValidationError');            
@@ -74,35 +83,25 @@ describe('API files', function(){
     });
     describe('Download file function', function(){
        
-        describe('Valid params', function(){
-
-            let fileId;
-            before((done) => {
-                fileId = "5aba3427d2b3db26a8e2d076";
-                done();
-            });
+        describe('Valid file id', function(){
 
             it('should download file', function(done){
                 
-                testFile.downloadFile(fileId)
+                testFile.downloadFile(fakeFileId)
                 .then((fileExport) => {
                     expect(fileExport).to.be.an('object');
-                    expect(fileExport.path).to.not.null;                                                          
+                    expect(fileExport.stream.path).to.include('fakeFile.txt');
+                    expect(fileExport.type).to.equal('text/plain');                                                          
                     done();
                 }, done)
                 .catch(done);
             });
         });
-        describe('Invaild params', function() {
+        describe('Invaild file id', function() {
 
-            let fileId;
-            before((done) => {
-                fileId = "1";
-                done();
-            });
             it('should not download', function(done){
 
-                testFile.downloadFile(fileId)
+                testFile.downloadFile(1)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err.name).to.equal('CastError');            
