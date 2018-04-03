@@ -5,12 +5,8 @@ const mongoose = require('mongoose');
 const mime = require('mime-types');
 const Joi = require('joi');
 
-const Issue = require('../models/issueModel');
-const path = require('path');
-const File = require(path.resolve('./models/fileModel'));
-
-const issueRoutes = require('../routes/issueRoutes.js');
-const fileRoutes = require('../routes/fileRoutes.js');
+const issueRoutes = require('../routes/issue.js');
+const fileRoutes = require('../routes/file.js');
 
 require('dotenv').config({ path: 'variablesDevelopment/variablesTest.env' });
 
