@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const model = require('../../models/issueModel');
+const model = require('../../models/issue');
 
 describe('IssueModel - create', function() {
 

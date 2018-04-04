@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
-const Issue = mongoose.model('Issue');
+const Issue = require('../models/issue');
 
 exports.create = (issue) => {
-      return new Promise((resolve, reject) => {
+      
+    return new Promise((resolve, reject) => {
          Issue.create({
-             title: issue.title,
+            title: issue.title,
             description: issue.description,
             name: issue.name
         }, (err, data) => {
@@ -16,7 +17,7 @@ exports.create = (issue) => {
     });
 }
 
-exports.view = (filterParams) => {
+exports.view = (params) => {
 
     return new Promise((resolve, reject) => {
         Issue.find({}, (err, data) => {
@@ -52,25 +53,11 @@ exports.destroy = (issueId) => {
     });
 }
 
-exports.completed = (issueId) => {
+exports.statusChange = (issueId, issueStatus) => {
 
     return new Promise((resolve, reject) => {
         Issue.findOneAndUpdate({ _id: issueId }, {
-            completed: 'Complete'
-        }, { new: true }, (err, data) => {
-            if(err){
-                reject(err);
-            }
-            return resolve(data);
-        });
-    });
-}
-
-exports.pending = (issueId) => {
-
-    return new Promise((resolve, reject) => {
-        Issue.findOneAndUpdate({ _id: issueId }, {
-            completed: 'Pending'
+            status: issueStatus
         }, { new: true }, (err, data) => {
             if(err){
                 reject(err);

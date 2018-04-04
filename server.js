@@ -5,16 +5,13 @@ const fs = require('fs');
 const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose');
 const mime = require('mime-types');
+const Joi = require('joi');
 
-const Issue = require('./models/issueModel');
-const path = require('path');
-const File = require(path.resolve('./models/fileModel'));
-
-const issueRoutes = require('./routes/issueRoutes.js');
-const fileRoutes = require('./routes/fileRoutes.js');
+const issueRoutes = require('./routes/issue.js');
+const fileRoutes = require('./routes/file.js');
 
 // import environmental variables from our variables.env file
-require('dotenv').config({ path: 'variables.env' });
+require('dotenv').config({ path: 'variablesDevelopment/variables.env' });
 
 // Connect to our Database and handle any bad connections
 mongoose.connect(process.env.DATABASE);

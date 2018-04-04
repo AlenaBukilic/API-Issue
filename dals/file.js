@@ -3,15 +3,15 @@ const fs = require('fs');
 const mime = require('mime-types');
 
 const path = require('path');
-const Issue = require(path.resolve('./models/issueModel'));
-const File = require('../models/fileModel');
+const Issue = require(path.resolve('./models/issue'));
+const File = require('../models/file');
 
-exports.uploadFile = (params) => {
+exports.save = (params) => {
 
-    const { issueId, fileName, path } = params;
+    const { issueId, fileName, path } = params;    
 
     return new Promise((resolve, reject) => {
- 
+
         File.create({
             path: path,
             fileName: fileName,
@@ -20,34 +20,40 @@ exports.uploadFile = (params) => {
             if(err){
                 return reject(err);
             }
-            
-            Issue.findOne({ _id: issueId })
-            .then((issue) => {
-                issue.files.push(file._id);
-                issue.save().then((data) => {
-                    return resolve(file);
-                });
-            });
+            return resolve(insertIdInIssue(file));
         });
     });
 }
 
-exports.downloadFile = (fileId) => {
+const insertIdInIssue = (file) => {
+    
+    return new Promise((resolve, reject) => {
+ 
+        Issue.findOne({ _id: file.issue })
+        .then((issue) => {
+            issue.files.push(file._id);
+            issue.save();
+            return resolve(file);
+        })
+        .catch(reject);
+    });
+}
+
+exports.download = (fileId) => {
 
     return new Promise((resolve, reject) => {
-       
         File.findOne({ _id: fileId })
         .then((file) => {
-            
+
             const path = file.path;
             const rstream = fs.createReadStream(path);
             const extType = mime.lookup(path);
         
-            return resolve(rstream)
-                .type(extType)
-                .header('Content-type', extType)
+            return resolve({
+                stream: rstream,
+                type: extType
+            });
         })
         .catch(reject);
     });         
 }
-

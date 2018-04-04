@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const model = require('../../models/fileModel');
+const model = require('../../models/file');
 
 describe('FileModel - create', function() {
 
@@ -19,6 +19,10 @@ describe('FileModel - create', function() {
             expect(file.path).to.exist;
             expect(file.path).to.be.a('string');
             expect(file.path).to.be.equal('./tmp/fakeFile.txt');
+
+            expect(file.fileName).to.exist;
+            expect(file.fileName).to.be.a('string');
+            expect(file.fileName).to.be.equal('fakeFile.txt');
 
             expect(file.issue).to.exist;
             

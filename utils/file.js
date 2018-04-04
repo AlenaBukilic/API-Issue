@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 
-const FacadeFileController = require('../facade/fileFacadeFunctions.js');
-
-exports.saveFile = (file, issueId) => {
+exports.save = (file, issueId) => {
 
     return new Promise((resolve, reject) => {
 

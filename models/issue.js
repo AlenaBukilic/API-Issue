@@ -18,7 +18,7 @@ const IssueSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    completed: {
+    status: {
         type: String,
         default: 'Pending'
     },
