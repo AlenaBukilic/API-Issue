@@ -1,3 +1,2 @@
 node_modules/
-config/variables.env
-config/variablesTest.env
+variablesDevelopment/
