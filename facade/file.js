@@ -1,16 +1,16 @@
 const saveFile = require('../utils/file');
-const DalsFileController = require('../dals/file');
+const DalsFile = require('../dals/file');
 
-exports.uploadFacade = (file, issueId) => {
+exports.upload = (file, issueId) => {
     
     return new Promise((resolve, reject) => {
 
         saveFile.save(file, issueId)
             .then((params) => {
-                return resolve(DalsFileController.save(params));
+                return resolve(DalsFile.save(params));
             })
             .catch(reject);
     });
 }
 
-exports.downloadFacade = DalsFileController.download;
+exports.download = DalsFile.download;

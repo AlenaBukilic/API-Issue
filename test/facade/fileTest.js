@@ -43,7 +43,7 @@ describe('Facade API files', function(){
 
             it('should save file', function(done){
                 
-                testFileFacade.uploadFacade(fakeFile, fakeIssueId)
+                testFileFacade.upload(fakeFile, fakeIssueId)
                 .then((savedFile) => {
                     expect(savedFile).to.be.an('object');
                     expect(savedFile.fileName).to.include('fakeFile.txt');
@@ -58,7 +58,7 @@ describe('Facade API files', function(){
 
             it('should not save file', function(done){
 
-                testFileFacade.uploadFacade(fakeFile, 1)
+                testFileFacade.upload(fakeFile, 1)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err.name).to.equal('ValidationError');            
@@ -74,7 +74,7 @@ describe('Facade API files', function(){
 
             it('should download file', function(done){
                 
-                testFileFacade.downloadFacade(fakeFileId)
+                testFileFacade.download(fakeFileId)
                 .then((fileExport) => {
                     expect(fileExport).to.be.an('object');
                     expect(fileExport.stream.path).to.include('fakeFile.txt');
@@ -89,7 +89,7 @@ describe('Facade API files', function(){
 
             it('should not download', function(done){
 
-                testFileFacade.downloadFacade(1)
+                testFileFacade.download(1)
                 .then(done, (err) => {
                     expect(err).to.not.be.null;
                     expect(err.name).to.equal('CastError');            

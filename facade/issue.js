@@ -1,13 +1,13 @@
-const DalsIssueController = require('../dals/issue.js');
+const DalsIssue = require('../dals/issue.js');
 
-exports.createFacade = DalsIssueController.create;
+exports.create = DalsIssue.create;
 
-exports.viewFacade = DalsIssueController.view;
+exports.view = DalsIssue.view;
 
-exports.editFacade = DalsIssueController.edit;
+exports.edit = DalsIssue.edit;
 
-exports.destroyFacade = DalsIssueController.destroy;
+exports.destroy = DalsIssue.destroy;
 
-exports.statusChangeFacade = DalsIssueController.statusChange;
+exports.statusChange = DalsIssue.statusChange;
 
-exports.commentFacade = DalsIssueController.comment;
+exports.comment = DalsIssue.comment;

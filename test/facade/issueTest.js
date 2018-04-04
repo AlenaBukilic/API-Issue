@@ -32,7 +32,7 @@ describe('Facade API issues', function(){
 
             it('should save the issue', function(done) {
 
-                testIssueFacade.createFacade(testIssueCreate)
+                testIssueFacade.create(testIssueCreate)
                 .then((createdIssue) => {
 
                     expect(createdIssue).to.be.an('object');
@@ -54,7 +54,7 @@ describe('Facade API issues', function(){
     
             it('should not save issue', function(done){
 
-                testIssueFacade.createFacade(testIssueCreateInvalid)
+                testIssueFacade.create(testIssueCreateInvalid)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('ValidationError');
@@ -71,7 +71,7 @@ describe('Facade API issues', function(){
 
             it('should show issues', function(done){
 
-                testIssueFacade.viewFacade()
+                testIssueFacade.view()
                 .then((issuesShown) => {
 
                     expect(issuesShown).to.be.an('array');
@@ -94,7 +94,7 @@ describe('Facade API issues', function(){
             }
             it('should edit the issue', function(done) {
 
-                testIssueFacade.editFacade(fakeIssueId, testIssueEditData)
+                testIssueFacade.edit(fakeIssueId, testIssueEditData)
                 .then((issueEdited) => {
 
                     expect(issueEdited).to.be.an('object');
@@ -111,7 +111,7 @@ describe('Facade API issues', function(){
     
             it('should not edit the issue', function(done){
 
-                testIssueFacade.editFacade(1, undefined)
+                testIssueFacade.edit(1, undefined)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');
@@ -127,7 +127,7 @@ describe('Facade API issues', function(){
 
             it('should delete the issues', function(done) {
 
-                testIssueFacade.destroyFacade(fakeIssueId)
+                testIssueFacade.destroy(fakeIssueId)
                 .then((issueForDelete) => {
                     expect(issueForDelete).to.be.an('object');
                 })
@@ -142,7 +142,7 @@ describe('Facade API issues', function(){
 
             it('should not delete', function(done){
 
-                testIssueFacade.destroyFacade(1)
+                testIssueFacade.destroy(1)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');
@@ -162,7 +162,7 @@ describe('Facade API issues', function(){
 
             it('should change issue status', function(done) {
 
-                testIssueFacade.statusChangeFacade(fakeIssueId, statusData.status)
+                testIssueFacade.statusChange(fakeIssueId, statusData.status)
                 .then((issueStatus) => {
 
                     expect(issueStatus).to.be.an('object');
@@ -177,7 +177,7 @@ describe('Facade API issues', function(){
 
             it('should not change issue status', function(done){
 
-                testIssueFacade.statusChangeFacade(1, undefined)
+                testIssueFacade.statusChange(1, undefined)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');            
@@ -199,7 +199,7 @@ describe('Facade API issues', function(){
 
             it('should add comment', function(done) {
 
-                testIssueFacade.commentFacade(fakeIssueId, commentData)
+                testIssueFacade.comment(fakeIssueId, commentData)
                 .then((issueComment) => {
                     
                     expect(issueComment).to.be.an('object');                    
@@ -214,7 +214,7 @@ describe('Facade API issues', function(){
 
             it('should not add comment', function(done){
 
-                testIssueFacade.commentFacade(1, undefined)
+                testIssueFacade.comment(1, undefined)
                 .then(done, (err) => {
                     expect(err).to.be.an('object');
                     expect(err.name).to.equal('CastError');            
